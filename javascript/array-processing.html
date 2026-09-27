@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Exercise 2 — Array Processing</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #f3f4f6;
+        color: #1f2937;
+        padding: 1.5rem;
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      h1 { margin-bottom: 0.5rem; }
+      p.lead { color: #6b7280; margin-bottom: 1rem; }
+      section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+      h2 { font-size: 1.05rem; margin-bottom: 0.5rem; color: #2563eb; }
+      pre {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+      }
+      code { font-family: ui-monospace, "Cascadia Code", monospace; }
+    </style>
+  </head>
+  <body>
+    <h1>Array Processing</h1>
+    <p class="lead">
+      forEach, map, filter, and reduce over an array of typed product data.
+      Open the browser console (F12) too — every step is logged there.
+    </p>
+
+    <section>
+      <h2>forEach — list every product</h2>
+      <pre id="out-foreach"></pre>
+    </section>
+
+    <section>
+      <h2>map — names with formatted prices</h2>
+      <pre id="out-map"></pre>
+    </section>
+
+    <section>
+      <h2>filter — only in-stock products under Rp 1.000.000</h2>
+      <pre id="out-filter"></pre>
+    </section>
+
+    <section>
+      <h2>reduce — total value of in-stock inventory</h2>
+      <pre id="out-reduce"></pre>
+    </section>
+
+    <script src="array-processing.js"></script>
+  </body>
+</html>

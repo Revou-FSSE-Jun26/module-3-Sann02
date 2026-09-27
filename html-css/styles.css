@@ -1,0 +1,233 @@
+/* ============================================================
+   RevoShop Frontend — Profile Page Styles
+   Demonstrates: all five selector types (element, class, ID,
+   descendant, pseudo-class), the box model (content/padding/
+   border/margin), CSS Grid for a 2D layout, Flexbox inside a
+   cell, and a responsive breakpoint (mobile-first).
+   ============================================================ */
+
+/* Universal reset + predictable box model */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ELEMENT selector — base page styling */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+  line-height: 1.6;
+  padding: 1rem;
+
+  /* BASE (mobile-first): single stacked column */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* CLASS selectors — shared card/box-model styling */
+.page-header,
+.content,
+.sidebar,
+.page-footer {
+  background: #ffffff;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+}
+
+.tagline {
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* DESCENDANT selector — links only inside the nav menu */
+.menu {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* PSEUDO-CLASS — interactive feedback on hover */
+.menu a:hover {
+  text-decoration: underline;
+  color: #1e40af;
+}
+
+/* Content sections spacing (box model: margin between blocks) */
+.content section {
+  margin-bottom: 1.5rem;
+}
+
+.content section:last-child {
+  margin-bottom: 0;
+}
+
+.content h2,
+.sidebar h2 {
+  margin-bottom: 0.75rem;
+}
+
+/* CLASS selector — the reusable project card (box model showcase) */
+.card {
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-top: 0.75rem;
+  background: #f9fafb;
+}
+
+.card h3 {
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+/* FLEXBOX inside a grid cell — vertical skills list */
+.skills {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skills li {
+  background: #eff6ff;
+  color: #1e40af;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* ---------- Contact form ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+fieldset.field {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Inline label for radios/checkbox */
+.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font: inherit;
+}
+
+/* PSEUDO-CLASS — highlight fields on focus */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+button[type="submit"] {
+  align-self: flex-start;
+  padding: 0.65rem 1.25rem;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+/* PSEUDO-CLASS — button darkens on hover */
+button[type="submit"]:hover {
+  background: #1e40af;
+}
+
+.status {
+  font-size: 0.9rem;
+  color: #059669;
+  min-height: 1.2rem;
+}
+
+.page-footer {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINT — tablet and up (768px)
+   Switch from a single stacked column to a two-column grid:
+   header + footer span the full width, content on the left,
+   sidebar on the right.
+   ============================================================ */
+@media (min-width: 768px) {
+  body {
+    grid-template-columns: 3fr 1fr; /* content : sidebar */
+    grid-template-areas:
+      "header header"
+      "content sidebar"
+      "footer footer";
+  }
+
+  .page-header {
+    grid-area: header;
+  }
+
+  .content {
+    grid-area: content;
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+  }
+
+  .page-footer {
+    grid-area: footer;
+  }
+}

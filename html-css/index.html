@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>M Ikhsan Febrian — Profile</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Full-width header spanning both grid columns -->
+    <header class="page-header">
+      <h1>M Ikhsan Febrian</h1>
+      <p class="tagline">Aspiring Full-Stack Engineer &bull; Building for the web</p>
+      <nav class="menu">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <!-- Two-dimensional CSS Grid layout: wide content + narrow sidebar -->
+    <main class="content">
+      <section id="about">
+        <h2>About Me</h2>
+        <p>
+          I'm learning to build accessible, responsive web applications from
+          scratch — starting with the raw fundamentals of semantic HTML, CSS
+          layout, JavaScript, and TypeScript before moving on to React and
+          Next.js.
+        </p>
+      </section>
+
+      <section id="projects">
+        <h2>Projects</h2>
+
+        <article class="card">
+          <h3>RevoShop Catalog</h3>
+          <p>
+            A fully typed, interactive product catalog with live search and an
+            add-to-cart counter, styled with Tailwind CSS.
+          </p>
+        </article>
+
+        <article class="card">
+          <h3>Todo App</h3>
+          <p>A simple task manager built with semantic HTML and CSS Grid.</p>
+        </article>
+      </section>
+
+      <section id="contact">
+        <h2>Contact Me</h2>
+        <form id="contact-form" novalidate>
+          <div class="field">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Your full name"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="age">Age</label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              placeholder="25"
+              min="1"
+              max="120"
+            />
+          </div>
+
+          <fieldset class="field">
+            <legend>Preferred contact method</legend>
+            <label class="inline">
+              <input type="radio" name="contact" value="email" checked />
+              Email
+            </label>
+            <label class="inline">
+              <input type="radio" name="contact" value="phone" />
+              Phone
+            </label>
+          </fieldset>
+
+          <label class="inline">
+            <input type="checkbox" name="newsletter" value="yes" />
+            Subscribe me to the newsletter
+          </label>
+
+          <div class="field">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic">
+              <option value="general">General question</option>
+              <option value="collaboration">Collaboration</option>
+              <option value="job">Job opportunity</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              placeholder="Say hi..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit">Send Message</button>
+          <p id="form-status" class="status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <!-- Sidebar: Flexbox column inside a grid cell -->
+    <aside class="sidebar">
+      <h2>Skills</h2>
+      <ul class="skills">
+        <li>Semantic HTML5</li>
+        <li>CSS Grid &amp; Flexbox</li>
+        <li>Responsive Design</li>
+        <li>Vanilla JavaScript</li>
+        <li>TypeScript</li>
+        <li>Tailwind CSS</li>
+      </ul>
+    </aside>
+
+    <footer class="page-footer">
+      <p>&copy; 2026 M Ikhsan Febrian. All rights reserved.</p>
+    </footer>
+
+    <script src="profile.js"></script>
+  </body>
+</html>

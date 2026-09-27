@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS Exercise 1 — DOM &amp; Events</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: system-ui, sans-serif;
+        background: #f3f4f6;
+        color: #1f2937;
+        padding: 1.5rem;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      h1 { margin-bottom: 1rem; }
+      section {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+      }
+      h2 { margin-bottom: 0.75rem; font-size: 1.1rem; }
+      button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+        font: inherit;
+      }
+      button:hover { background: #1e40af; }
+      input {
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font: inherit;
+      }
+      .row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+
+      /* Class that JS toggles on/off */
+      .highlight {
+        background: #fef08a;
+        border-color: #eab308;
+        transition: background 0.2s ease;
+      }
+
+      #task-list { list-style: none; margin-top: 0.75rem; }
+      #task-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+        margin-top: 0.5rem;
+      }
+      #task-list button {
+        background: #dc2626;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.85rem;
+      }
+      #task-list button:hover { background: #991b1b; }
+    </style>
+  </head>
+  <body>
+    <h1>DOM Manipulation &amp; Event Handling</h1>
+
+    <!-- 1. SELECT & UPDATE an element -->
+    <section>
+      <h2>1. Select &amp; update text</h2>
+      <p id="counter-text">You clicked 0 times.</p>
+      <button id="increment-btn">Click me</button>
+    </section>
+
+    <!-- 2. TOGGLE a class -->
+    <section id="toggle-box">
+      <h2>2. Toggle a CSS class</h2>
+      <p>Click the button to toggle the highlight on this box.</p>
+      <div class="row">
+        <button id="toggle-btn">Toggle highlight</button>
+      </div>
+    </section>
+
+    <!-- 3. CREATE & REMOVE elements -->
+    <section>
+      <h2>3. Create &amp; remove elements</h2>
+      <div class="row">
+        <input id="task-input" type="text" placeholder="Add a task..." />
+        <button id="add-btn">Add task</button>
+      </div>
+      <ul id="task-list"></ul>
+    </section>
+
+    <script src="dom-events.js"></script>
+  </body>
+</html>

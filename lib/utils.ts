@@ -50,7 +50,7 @@ export function getStockLabel(status: StockStatus): string {
 
 export function getStockBadgeClasses(status: StockStatus): string {
   return cn(
-    "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+    "inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold",
     STOCK_BADGE_CLASSES[status],
   );
 }

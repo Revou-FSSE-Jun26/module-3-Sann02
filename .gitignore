@@ -25,6 +25,9 @@ next-env.d.ts
 # ---------- Checkpoint 1 build output ----------
 typescript-tailwind/dist/
 
+# ---------- Backend (separate repo, not part of this submission) ----------
+revoshop-backend/
+
 # ---------- OS / editor / debug ----------
 .DS_Store
 Thumbs.db

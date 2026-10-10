@@ -1,17 +1,130 @@
-# RevoShop — Frontend Fundamentals (Checkpoint 1)
+# RevoShop Frontend
 
 Author: **M Ikhsan Febrian**
 
-This repository proves fluency in the raw building blocks that React, Next.js,
-and Tailwind sit on top of: **semantic HTML**, **CSS layout** (Grid / Flexbox +
-responsive breakpoints), **vanilla JavaScript** (DOM manipulation, events, array
-methods), **TypeScript's type system**, and **Tailwind's utility-first styling**.
-
-> This checkpoint is fundamentals-focused and does **not** touch Next.js or the
-> Flask API — those start in Checkpoint 2. The typed product catalog here is the
-> direct predecessor of the React `ProductCard` you'll build next.
+| Checkpoint | What | Where |
+| --- | --- | --- |
+| **2** | Next.js 16 App Router frontend with live data from the Module 2 Flask API | repo root (`app/`, `components/`, `lib/`) |
+| **1** | HTML/CSS, vanilla JS, TypeScript + Tailwind fundamentals | `html-css/`, `javascript/`, `typescript-tailwind/` ([details below](#checkpoint-1--frontend-fundamentals)) |
 
 ---
+
+# Checkpoint 2: Next.js + Flask API
+
+Scaffolded with `create-next-app` (TypeScript, ESLint, Tailwind CSS v4, App Router).
+Every page fetches **real data** from the RevoShop Flask API in a **Server Component**.
+
+## ▶️ Run it locally
+
+**1. Start the Flask API (Module 2)** at `http://localhost:5000`, using PostgreSQL:
+
+```bash
+cd revoshop-backend
+uv sync                      # or: pip install -r requirements.txt
+uv run flask db upgrade
+uv run python -m helper.seed
+uv run python -m helper.seed_order
+uv run flask run --port 5000
+```
+
+> `GET /products` accepts optional `?search=` (case-insensitive name match) and
+> `?category_id=`. Both were added to the Module 2 API for this checkpoint and
+> are covered by tests in `tests/test_products.py`.
+
+**2. Start the Next.js app** from the repo root:
+
+```bash
+cp .env.example .env.local   # Windows: copy .env.example .env.local
+npm install
+npm run dev                  # http://localhost:3000
+```
+
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server (Turbopack) |
+| `npm run build` / `npm start` | Production build / serve. The API must be running, because pages render at request time |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `next typegen` + `tsc --noEmit` |
+
+### Environment variables (`.env.example`)
+
+| Key | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | Flask API base URL. Every fetch reads this; there are no hardcoded URLs |
+| `API_SECRET_KEY` | Server-only secret (no `NEXT_PUBLIC_` prefix). Sent as `X-API-Key` when set |
+| `API_DEMO_DELAY_MS` | Optional artificial delay to make `loading.tsx` easy to see (default `0`) |
+
+`.env.local` is git-ignored (`.env*`). Only `.env.example` is committed (`!.env.example`).
+
+## 📁 Structure
+
+```
+app/
+├── layout.tsx              Root layout: <Header /> + page + <Footer /> on every route, title template
+├── page.tsx                /             first 5 products (read-only cards)
+├── loading.tsx, error.tsx, not-found.tsx
+├── products/
+│   ├── layout.tsx          Nested layout (banner + breadcrumb), stays mounted
+│   ├── page.tsx            /products     renders only <ProductGrid />
+│   ├── loading.tsx, error.tsx
+│   └── [id]/
+│       ├── page.tsx        /products/:id detail + generateMetadata (product name as title)
+│       └── loading.tsx, error.tsx
+├── categories/             /categories   page.tsx + loading.tsx + error.tsx
+└── orders/                 /orders       page.tsx + loading.tsx + error.tsx
+components/                 Header, NavBar, Footer, Card, Badge, ProductCard, QuantityCounter,
+                            ProductGrid, SearchBar, CategoryFilter, AddProductForm, CartSummary,
+                            RouteError, Skeletons, LayoutMountLogger
+lib/
+├── types.ts                Product / Category / Order types that mirror the Flask JSON
+├── api.ts                  Server-only fetch helpers (res.ok check → throws for error.tsx)
+└── utils.ts                cn(), formatPrice(), stock + status → Tailwind class helpers
+```
+
+## 🧭 How the pieces fit
+
+- **Server vs Client.** Pages are Server Components that `await` the API. Client Components
+  are used only for interactivity: `NavBar` (`usePathname`), `ProductGrid` (search, filter,
+  cart, form), `ProductCard` (quantity counter), and the `error.tsx` boundaries.
+- **Search + category filter.**
+  - Typing filters the list instantly in the browser.
+  - After a short pause, `router.push()` writes `?search=` / `?category=` to the URL.
+  - The `/products` Server Component then refetches `GET /products?search=&category_id=` from
+    the API. Back/forward and shared links keep the same filters.
+- **Cart.** The cart is held in `ProductGrid` state and updated immutably (`[...prev, item]`,
+  `map`, `filter`). The summary's item count and total are derived from it, not stored.
+- **AddProductForm.** Controlled inputs with `validate()` on every render. Errors appear inline,
+  and the submit button stays disabled until the form is valid. New products are appended to
+  local state; saving to the API is Checkpoint 3.
+- **Errors.** `lib/api.ts` checks `res.ok` and throws. Each route's `error.tsx` shows a friendly
+  message and a **Try again** button (`retry()`).
+- **Nested layout.** Open DevTools → Console and click between `/products` and `/products/[id]`.
+  `[products/layout] mounted` is logged once. `unmounted` appears only after you leave the
+  products section.
+
+## 🎬 Demo evidence (`screenshots/checkpoint-2/`)
+
+| File | Shows |
+| --- | --- |
+| `01-home-5-products.png` | Home with 5 real products from the API, Home active in the nav |
+| `02-products-search-and-category.png` | Live search "celana" + category "Pakaian" at `/products?search=celana&category=2` |
+| `03-products-cart-and-form.png` | Cart count/total after Add to Cart, product added via the form, out-of-stock card |
+| `04-product-detail-dynamic-title.png` | `/products/2` with title "Mouse Logitech G502 \| RevoShop" |
+| `05-categories.png`, `06-orders.png` | Real categories (with product counts) and recent orders |
+| `07-products-mobile.png` | Mobile width (375px) |
+| `08-loading-skeleton.png` | `loading.tsx` skeleton (captured with `API_DEMO_DELAY_MS=3000`) |
+| `09-error-api-offline.png` | `error.tsx` with the Flask API stopped |
+
+To reproduce:
+- **Loading state:** set `API_DEMO_DELAY_MS=3000` in `.env.local` and restart `npm run dev`.
+- **Error state:** stop the Flask server and reload a page.
+
+---
+
+# Checkpoint 1 — Frontend Fundamentals
+
+These exercises cover the building blocks that React, Next.js and Tailwind sit on top of:
+semantic HTML, CSS layout, vanilla JavaScript, TypeScript, and Tailwind.
 
 ## 📁 Folder structure
 

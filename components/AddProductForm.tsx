@@ -84,6 +84,8 @@ export default function AddProductForm({ categories, onAddProduct }: AddProductF
       error,
       inputProps: {
         id,
+        // Leaving a field (e.g. tabbing past an empty name) also reveals its error.
+        onBlur: () => setTouched((prev) => ({ ...prev, [name]: true })),
         "aria-invalid": error ? true : undefined,
         "aria-describedby": error ? errorId : undefined,
         className: cn(

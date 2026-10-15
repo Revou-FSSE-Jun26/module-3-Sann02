@@ -2,15 +2,28 @@
 
 import { useId, useState, type FormEvent } from "react";
 import Card from "@/components/Card";
+import { FormError } from "@/components/FormField";
 import type { Category, ProductFormData, ProductFormErrors } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface AddProductFormProps {
   categories: Category[];
-  onAddProduct: (data: ProductFormData) => void;
+  /**
+   * Receives validated, trimmed data. May be async (POST/PUT to the API);
+   * throw to keep the form filled in and show the message.
+   */
+  onAddProduct: (data: ProductFormData) => void | Promise<void>;
+  title?: string;
+  subtitle?: string;
+  submitLabel?: string;
+  /** Pre-filled values, e.g. when editing an existing product. */
+  initialValues?: ProductFormData;
+  /** Clear the fields after a successful submit (create) or keep them (edit). */
+  resetOnSuccess?: boolean;
+  onCancel?: () => void;
 }
 
-const EMPTY_FORM: ProductFormData = {
+export const EMPTY_PRODUCT_FORM: ProductFormData = {
   name: "",
   price: 0,
   stock_quantity: 0,
@@ -25,35 +38,52 @@ type Touched = Partial<Record<Field, boolean>>;
 export function validateProduct(data: ProductFormData): ProductFormErrors {
   const errors: ProductFormErrors = {};
   const name = data.name.trim();
-
   if (!name) errors.name = "Name is required.";
   else if (name.length > 150) errors.name = "Name must be 150 characters or fewer.";
-
   if (!Number.isFinite(data.price) || data.price <= 0) {
     errors.price = "Price must be greater than 0.";
   }
-
   if (!Number.isInteger(data.stock_quantity) || data.stock_quantity < 0) {
     errors.stock_quantity = "Stock must be a whole number, 0 or more.";
   }
-
   if (!data.category_id) errors.category_id = "Please select a category.";
-
   if (data.description.length > 500) {
     errors.description = "Description must be 500 characters or fewer.";
   }
-
   return errors;
 }
 
 const inputClasses =
   "w-full rounded-lg border bg-white px-3 py-2 text-sm focus:ring-2 focus:outline-none";
 
-export default function AddProductForm({ categories, onAddProduct }: AddProductFormProps) {
+const ALL_TOUCHED: Touched = {
+  name: true,
+  price: true,
+  stock_quantity: true,
+  category_id: true,
+  description: true,
+};
+
+/**
+ * The validated product form shared by CreateProductForm and EditProductForm.
+ * Errors appear once a field is touched (edited or blurred), or for every field
+ * when the user tries to submit.
+ */
+export default function AddProductForm({
+  categories,
+  onAddProduct,
+  title = "Add a product",
+  subtitle,
+  submitLabel = "Add product",
+  initialValues = EMPTY_PRODUCT_FORM,
+  resetOnSuccess = true,
+  onCancel,
+}: AddProductFormProps) {
   const idPrefix = useId();
-  const [form, setForm] = useState<ProductFormData>(EMPTY_FORM);
+  const [form, setForm] = useState<ProductFormData>(initialValues);
   const [touched, setTouched] = useState<Touched>({});
-  const [successMessage, setSuccessMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const errors = validateProduct(form);
   const hasErrors = Object.keys(errors).length > 0;
@@ -61,16 +91,28 @@ export default function AddProductForm({ categories, onAddProduct }: AddProductF
   function update<K extends Field>(field: K, value: ProductFormData[K]) {
     setForm((prev) => ({ ...prev, [field]: value })); // immutable update
     setTouched((prev) => ({ ...prev, [field]: true }));
-    setSuccessMessage("");
+    setSubmitError("");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (hasErrors) return;
-    onAddProduct({ ...form, name: form.name.trim(), description: form.description.trim() });
-    setSuccessMessage(`"${form.name.trim()}" was added to the list.`);
-    setForm(EMPTY_FORM);
-    setTouched({});
+    if (hasErrors) {
+      setTouched(ALL_TOUCHED); // reveal every message instead of failing silently
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      await onAddProduct({ ...form, name: form.name.trim(), description: form.description.trim() });
+      if (resetOnSuccess) {
+        setForm(EMPTY_PRODUCT_FORM);
+        setTouched({});
+      }
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Saving failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   /** Shared a11y wiring for one field: id, error id, and whether to show the error. */
@@ -84,7 +126,7 @@ export default function AddProductForm({ categories, onAddProduct }: AddProductF
       error,
       inputProps: {
         id,
-        // Leaving a field (e.g. tabbing past an empty name) also reveals its error.
+        name,
         onBlur: () => setTouched((prev) => ({ ...prev, [name]: true })),
         "aria-invalid": error ? true : undefined,
         "aria-describedby": error ? errorId : undefined,
@@ -114,13 +156,10 @@ export default function AddProductForm({ categories, onAddProduct }: AddProductF
   return (
     <Card as="section" className="space-y-3">
       <div>
-        <h2 className="text-lg font-semibold">Add a product</h2>
-        <p className="text-xs text-gray-500">
-          Saved to this page only. Saving to the API comes in Checkpoint 3.
-        </p>
+        <h2 className="text-lg font-semibold">{title}</h2>
+        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
       </div>
-
-      <form onSubmit={handleSubmit} noValidate className="space-y-3">
+      <form onSubmit={handleSubmit} noValidate className="space-y-3" aria-label={title}>
         <div>
           <label htmlFor={nameField.id} className="mb-1 block text-sm font-medium">
             Name
@@ -198,19 +237,26 @@ export default function AddProductForm({ categories, onAddProduct }: AddProductF
           {errorText(descriptionField)}
         </div>
 
-        <button
-          type="submit"
-          disabled={hasErrors}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600"
-        >
-          Add product
-        </button>
-        {hasErrors && (
-          <p className="text-xs text-gray-500">Fill in every required field to enable the button.</p>
-        )}
-        <p role="status" className="text-sm text-green-700">
-          {successMessage}
-        </p>
+        <FormError message={submitError} />
+
+        <div className="flex gap-2">
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+          )}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {submitting ? "Saving…" : submitLabel}
+          </button>
+        </div>
       </form>
     </Card>
   );

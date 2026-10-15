@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import AddToCartButton from "@/components/AddToCartButton";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import QuantityCounter from "@/components/QuantityCounter";
 import type { Product } from "@/lib/types";
-import { cn, formatPrice, getButtonClasses, getStockStatus } from "@/lib/utils";
+import { cn, formatPrice, getStockStatus } from "@/lib/utils";
 
 export interface ProductCardProps {
   product: Product;
@@ -16,9 +17,8 @@ export interface ProductCardProps {
   featured?: boolean;
   /** Show the quantity counter and Add to Cart button. */
   showActions?: boolean;
-  /** Detail page link; omitted for products that only exist locally. */
+  /** Detail page link. */
   href?: string;
-  onAddToCart?: (product: Product, quantity: number) => void;
 }
 
 export default function ProductCard({
@@ -27,7 +27,6 @@ export default function ProductCard({
   featured = false,
   showActions = true,
   href,
-  onAddToCart,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
 
@@ -35,11 +34,6 @@ export default function ProductCard({
   const inStock = status !== "out-of-stock";
   // Never show more than what is in stock, even if the stock changed after a refetch.
   const safeQuantity = Math.min(quantity, Math.max(product.stock_quantity, 1));
-
-  function handleAddToCart() {
-    onAddToCart?.(product, safeQuantity);
-    setQuantity(1);
-  }
 
   const title = href ? (
     <Link href={href} className="hover:text-blue-600 hover:underline">
@@ -95,14 +89,10 @@ export default function ProductCard({
               onChange={setQuantity}
               label={product.name}
             />
-            <button type="button" onClick={handleAddToCart} className={getButtonClasses(true)}>
-              Add to Cart
-            </button>
+            <AddToCartButton product={product} quantity={safeQuantity} onAdded={() => setQuantity(1)} />
           </div>
         ) : (
-          <button type="button" disabled className={cn(getButtonClasses(false), "w-full")}>
-            Out of Stock
-          </button>
+          <AddToCartButton product={product} className="w-full" />
         ))}
     </Card>
   );

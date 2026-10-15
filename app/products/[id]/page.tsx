@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
+import ProductPurchase from "@/components/ProductPurchase";
 import { getCategories, getProduct } from "@/lib/api";
 import { formatDate, formatPrice, getStockStatus } from "@/lib/utils";
 
@@ -63,6 +64,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
           <p className="text-3xl font-bold text-blue-700">{formatPrice(product.price)}</p>
 
           {product.description && <p className="text-gray-700">{product.description}</p>}
+          <ProductPurchase product={product} />
 
           <dl className="grid grid-cols-2 gap-3 rounded-lg bg-gray-50 p-4 text-sm">
             <div>

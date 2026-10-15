@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Card from "@/components/Card";
 import type { CartItem } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
@@ -7,10 +8,18 @@ interface CartSummaryProps {
   currency?: string;
   onRemove?: (productId: number) => void;
   onClear?: () => void;
+  /** Show a "View cart" link to /cart under the total. */
+  showCartLink?: boolean;
 }
 
 /** Everything shown here is derived from `items`; nothing is stored separately. */
-export default function CartSummary({ items, currency = "Rp", onRemove, onClear }: CartSummaryProps) {
+export default function CartSummary({
+  items,
+  currency = "Rp",
+  onRemove,
+  onClear,
+  showCartLink = false,
+}: CartSummaryProps) {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
@@ -66,6 +75,14 @@ export default function CartSummary({ items, currency = "Rp", onRemove, onClear 
           <dd className="font-bold text-blue-700 tabular-nums">{formatPrice(total, currency)}</dd>
         </div>
       </dl>
+      {showCartLink && (
+        <Link
+          href="/cart"
+          className="block rounded-lg bg-gray-900 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-gray-700"
+        >
+          View cart
+        </Link>
+      )}
     </Card>
   );
 }

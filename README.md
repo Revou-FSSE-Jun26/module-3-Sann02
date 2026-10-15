@@ -2,122 +2,213 @@
 
 Author: **M Ikhsan Febrian**
 
+| | URL |
+| --- | --- |
+| 🛍️ Live frontend (Vercel) | **FRONTEND_URL_PLACEHOLDER** |
+| ⚙️ Live API (Flask on Vercel + Supabase Postgres) | https://module-2-sann02-hvbj.vercel.app |
+
 | Checkpoint | What | Where |
 | --- | --- | --- |
-| **2** | Next.js 16 App Router frontend with live data from the Module 2 Flask API | repo root (`app/`, `components/`, `lib/`) |
+| **3** | Forms, authentication, cart + checkout, admin dashboard, Playwright E2E, Vercel deploy | repo root (`app/`, `components/`, `context/`, `hooks/`, `lib/`, `e2e/`) |
+| **2** | Next.js 16 App Router pages with live data from the Module 2 Flask API | repo root ([notes below](#checkpoint-2-nextjs--flask-api)) |
 | **1** | HTML/CSS, vanilla JS, TypeScript + Tailwind fundamentals | `html-css/`, `javascript/`, `typescript-tailwind/` ([details below](#checkpoint-1--frontend-fundamentals)) |
+
+---
+
+# Overview
+
+RevoShop is an online shop built with Next.js 16 (App Router) on top of the RevoShop Flask API
+from Module 2. Visitors browse products and categories. Customers register, log in, fill a cart
+that survives a refresh, check out, and track their orders. Admins manage products, categories
+and see every order from a dashboard. Every screen talks to the real API; nothing is mocked.
+
+# Features implemented
+
+### 👤 Logged out
+- **Home `/`**: 5 featured products. **Products `/products`**: live search + category filter
+  synced to the URL (`?search=&category=`), refetched from the API.
+- **Product detail `/products/[id]`**: dynamic page title, quantity counter + Add to Cart.
+- **Categories `/categories`** with product counts.
+- **Register `/register`**: `RegisterForm` with 4 rules (username required, email format,
+  password ≥ 8 chars, passwords match). On `201` the user is logged in and sent to `/`.
+  `409` shows "Email already registered".
+- **Login `/login`**: `LoginForm`. `200` → admins go to `/dashboard`, customers to `/`.
+  `401` → form-level "Invalid email or password". Empty fields are reported under the input.
+- Add to Cart and every protected page send a guest to `/login`.
+
+### 🛒 Customer (logged in)
+- **Header** shows `Hi, {username}`, cart count and Logout. The session lives in `AuthContext`
+  and `localStorage`, so it survives a refresh.
+- **`AddToCartButton`** adds to `CartContext` (immutable updates, capped at stock), with a toast.
+- **Cart `/cart`**: table with quantity steppers, subtotal per row, Remove per row, total,
+  empty state, and **Proceed to checkout disabled when the cart is empty**. Persisted in
+  `localStorage`.
+- **Checkout `/checkout`**: order summary → **Confirm order** sends `POST /orders` with the JWT,
+  clears the cart, shows a toast and redirects to `/orders`.
+- **My Orders `/orders`** (own orders only) and **order detail `/orders/[id]`** (items, qty,
+  subtotal, total). Another user's order shows "Order not found".
+- `/dashboard`, `/dashboard/orders` and `/dashboard/categories` redirect a customer to `/`.
+
+### 🔐 Admin
+- **`/dashboard`**: product table with `CreateProductForm` (+ New product) and
+  `EditProductForm` (Edit per row), both with validation. Delete asks for confirmation;
+  a product in an **active order** cannot be deleted. The API's `409` is shown as a red
+  banner and a toast.
+- **`/dashboard/categories`**: category CRUD. `CreateCategoryForm` validates the name. Deleting
+  a category that **still has products** is blocked (`409`) with a visible error.
+- **`/dashboard/orders`**: read-only overview of every user's orders, with a User column.
+- **Toasts** (`react-hot-toast`) for success and error on every CRUD and cart action.
+
+### Route guards
+| Wrapper | Rule | Used by |
+| --- | --- | --- |
+| `ProtectedRoute` | logged in, otherwise `/login` | `/cart`, `/checkout`, `/orders`, `/orders/[id]` |
+| `AdminRoute` | logged in (`/login`) **and** admin (`/`) | `/dashboard`, `/dashboard/categories`, `/dashboard/orders` |
+| `PublicOnlyRoute` | logged out, otherwise `/dashboard` or `/` | `/login`, `/register` |
+
+Guards redirect with `router.replace()` inside `useEffect` and wait for `isReady`, the flag that
+`AuthProvider` sets after reading `localStorage`, so a refresh never bounces a logged-in user.
+Client-side guards are UX only. The API is still the real gatekeeper.
+
+# Technologies used
+
+Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind CSS v4 · react-hot-toast ·
+Playwright · `next/navigation` (`useRouter`, `usePathname`, `useSearchParams`) · React Context ·
+`localStorage` for session and cart persistence · `NEXT_PUBLIC_API_BASE_URL` · Vercel.
+Backend: Flask + SQLAlchemy + JWT, deployed on Vercel with a Supabase PostgreSQL database.
+
+# Folder structure
+
+```
+app/                         Pages (App Router). Server Components unless marked (client)
+├── layout.tsx               <Providers> → Header + page + Footer, title template
+├── page.tsx, products/, categories/          Checkpoint 2 pages (server-rendered from the API)
+├── login/, register/        PublicOnlyRoute + LoginForm / RegisterForm
+├── cart/, checkout/         ProtectedRoute + CartTable / CheckoutForm
+├── orders/ , orders/[id]/   ProtectedRoute + CustomerOrders / OrderDetail
+└── dashboard/               layout (tabs) + page / categories / orders, each in AdminRoute
+components/                  UI: Header, NavBar, Card, ProductCard, AddToCartButton, CartTable,
+                             CheckoutForm, RegisterForm, LoginForm, FormField, AddProductForm,
+                             CreateProductForm, EditProductForm, CreateCategoryForm,
+                             DashboardProducts, DashboardCategories, AdminOrders, OrdersTable,
+                             ProtectedRoute, AdminRoute, PublicOnlyRoute, Providers, …
+context/                     AuthContext (user + JWT), CartContext (items, totals), both persisted
+hooks/                       useAuth(), useCart(), useApiData() (client fetch + reload)
+lib/
+├── api.ts                   Server-side fetch helpers (Server Components)
+├── apiClient.ts             Browser fetch helpers: auth, CRUD, orders (Bearer token)
+├── errors.ts                ApiError (status-aware) + getErrorMessage()
+├── types.ts                 API types + form types
+└── utils.ts                 formatting + Tailwind class helpers
+e2e/                         Playwright specs + helpers (screenshots.spec.ts captures the README images)
+playwright.config.ts
+```
+
+# Run it locally
+
+**Requirements:** Node.js 20+, npm. Optional: the Flask API locally (otherwise use the live one).
+
+```bash
+git clone https://github.com/Revou-FSSE-Jun26/module-3-Sann02.git
+cd module-3-Sann02
+cp .env.example .env.local     # Windows: copy .env.example .env.local
+npm install
+npm run dev                    # http://localhost:3000
+```
+
+In `.env.local`, point `NEXT_PUBLIC_API_BASE_URL` at either API:
+- the live one: `https://module-2-sann02-hvbj.vercel.app`
+- a local Flask server: `http://localhost:5000` (see the Module 2 README: `flask db upgrade`,
+  `python -m helper.seed`, `python -m helper.seed_order`, `flask run`)
+
+Demo admin from the seed data: `admin@email.com` / `admin123`. Customers can register themselves.
+
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server (Turbopack) |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run lint` / `npm run typecheck` | ESLint / `next typegen` + `tsc --noEmit` |
+| `npm run test:e2e` | Playwright E2E suite |
+| `npm run test:e2e:report` | Open the last HTML report |
+
+| Env key | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_BASE_URL` | API base URL (inlined at build time; set it in Vercel too). No hardcoded URLs |
+| `API_SECRET_KEY` | Server-only secret, sent as `X-API-Key` when set |
+| `API_DEMO_DELAY_MS` | Optional delay to show `loading.tsx` (default `0`) |
+
+# Run the E2E test suite (Playwright)
+
+```bash
+npx playwright install chromium       # once (or set PLAYWRIGHT_CHANNEL=msedge / chrome)
+
+# A) Against the live Vercel deployment
+PLAYWRIGHT_BASE_URL=FRONTEND_URL_PLACEHOLDER npm run test:e2e
+#    PowerShell: $env:PLAYWRIGHT_BASE_URL="FRONTEND_URL_PLACEHOLDER"; npm run test:e2e
+
+# B) Locally: build first; the config starts `next start` on port 3100
+npm run build
+npm run test:e2e
+```
+
+There are 23 tests in 4 specs. They run against the real API and create their own uniquely named
+users, products and categories. Products and categories are deleted again at the end.
+
+| Spec | Covers |
+| --- | --- |
+| `public.spec.ts` | home, search + URL, dynamic product title, categories, guest Add to Cart → `/login`, every protected route → `/login` |
+| `auth.spec.ts` | RegisterForm's 4 validation rules, register → `/` + refresh keeps the username, duplicate email, login 401 banner, empty-field errors, customer → `/` and blocked from `/dashboard*` |
+| `cart-checkout.spec.ts` | empty state + disabled checkout, add with quantity, persistence across refresh, remove, checkout → `POST /orders` → cart cleared → `/orders` → order detail |
+| `admin.spec.ts` | admin → `/dashboard`, product validate/create/edit/delete, **409 delete guard**, category validate/create/edit/delete + **linked-products guard**, all-orders overview |
+
+The guard tests use seeded data: "Keyboard Mechanical" is in a pending order, and "Elektronik"
+has products. Override them with `E2E_GUARDED_PRODUCT` / `E2E_GUARDED_CATEGORY` and the admin
+login with `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`.
+
+# Screenshots (`screenshots/checkpoint-3/`)
+
+Regenerate with `CAPTURE_SCREENSHOTS=1 npx playwright test e2e/screenshots.spec.ts`.
+
+| Home | Product listing | Product detail |
+| --- | --- | --- |
+| ![Home](screenshots/checkpoint-3/01-home.png) | ![Products](screenshots/checkpoint-3/02-products.png) | ![Product detail](screenshots/checkpoint-3/03-product-detail.png) |
+
+| Categories | Register (validation) | Login (401) |
+| --- | --- | --- |
+| ![Categories](screenshots/checkpoint-3/04-categories.png) | ![Register](screenshots/checkpoint-3/05-register-validation.png) | ![Login](screenshots/checkpoint-3/06-login-error.png) |
+
+| Cart | Checkout | My orders |
+| --- | --- | --- |
+| ![Cart](screenshots/checkpoint-3/07-cart.png) | ![Checkout](screenshots/checkpoint-3/08-checkout.png) | ![My orders](screenshots/checkpoint-3/09-my-orders.png) |
+
+| Admin dashboard | Admin categories | Admin orders |
+| --- | --- | --- |
+| ![Dashboard](screenshots/checkpoint-3/10-admin-dashboard.png) | ![Categories admin](screenshots/checkpoint-3/11-admin-categories.png) | ![Orders admin](screenshots/checkpoint-3/12-admin-orders.png) |
+
+### Known limitations
+- The Flask API does not check the admin role on write endpoints or on `GET /orders` without a
+  token, so the admin pages are protected in the UI only (the Module 2 rubric made JWT optional).
+- The JWT is stored in `localStorage`. That's fine for this course, but a production app would
+  prefer an httpOnly cookie.
 
 ---
 
 # Checkpoint 2: Next.js + Flask API
 
-Scaffolded with `create-next-app` (TypeScript, ESLint, Tailwind CSS v4, App Router).
-Every page fetches **real data** from the RevoShop Flask API in a **Server Component**.
+Checkpoint 3 changed two things here. The cart moved from `ProductGrid` state into
+`CartContext`, and `AddProductForm` became the shared, validated form behind
+`CreateProductForm` and `EditProductForm`. Everything else below still applies.
 
-## ▶️ Run it locally
-
-**1. Start the Flask API (Module 2)** at `http://localhost:5000`, using PostgreSQL:
-
-```bash
-cd revoshop-backend
-uv sync                      # or: pip install -r requirements.txt
-uv run flask db upgrade
-uv run python -m helper.seed
-uv run python -m helper.seed_order
-uv run flask run --port 5000
-```
-
-> `GET /products` accepts optional `?search=` (case-insensitive name match) and
-> `?category_id=`. Both were added to the Module 2 API for this checkpoint and
-> are covered by tests in `tests/test_products.py`.
-
-**2. Start the Next.js app** from the repo root:
-
-```bash
-cp .env.example .env.local   # Windows: copy .env.example .env.local
-npm install
-npm run dev                  # http://localhost:3000
-```
-
-| Script | What it does |
-| --- | --- |
-| `npm run dev` | Dev server (Turbopack) |
-| `npm run build` / `npm start` | Production build / serve. The API must be running, because pages render at request time |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `next typegen` + `tsc --noEmit` |
-
-### Environment variables (`.env.example`)
-
-| Key | Purpose |
-| --- | --- |
-| `NEXT_PUBLIC_API_BASE_URL` | Flask API base URL. Every fetch reads this; there are no hardcoded URLs |
-| `API_SECRET_KEY` | Server-only secret (no `NEXT_PUBLIC_` prefix). Sent as `X-API-Key` when set |
-| `API_DEMO_DELAY_MS` | Optional artificial delay to make `loading.tsx` easy to see (default `0`) |
-
-`.env.local` is git-ignored (`.env*`). Only `.env.example` is committed (`!.env.example`).
-
-## 📁 Structure
-
-```
-app/
-├── layout.tsx              Root layout: <Header /> + page + <Footer /> on every route, title template
-├── page.tsx                /             first 5 products (read-only cards)
-├── loading.tsx, error.tsx, not-found.tsx
-├── products/
-│   ├── layout.tsx          Nested layout (banner + breadcrumb), stays mounted
-│   ├── page.tsx            /products     renders only <ProductGrid />
-│   ├── loading.tsx, error.tsx
-│   └── [id]/
-│       ├── page.tsx        /products/:id detail + generateMetadata (product name as title)
-│       └── loading.tsx, error.tsx
-├── categories/             /categories   page.tsx + loading.tsx + error.tsx
-└── orders/                 /orders       page.tsx + loading.tsx + error.tsx
-components/                 Header, NavBar, Footer, Card, Badge, ProductCard, QuantityCounter,
-                            ProductGrid, SearchBar, CategoryFilter, AddProductForm, CartSummary,
-                            RouteError, Skeletons, LayoutMountLogger
-lib/
-├── types.ts                Product / Category / Order types that mirror the Flask JSON
-├── api.ts                  Server-only fetch helpers (res.ok check → throws for error.tsx)
-└── utils.ts                cn(), formatPrice(), stock + status → Tailwind class helpers
-```
-
-## 🧭 How the pieces fit
-
-- **Server vs Client.** Pages are Server Components that `await` the API. Client Components
-  are used only for interactivity: `NavBar` (`usePathname`), `ProductGrid` (search, filter,
-  cart, form), `ProductCard` (quantity counter), and the `error.tsx` boundaries.
-- **Search + category filter.**
-  - Typing filters the list instantly in the browser.
-  - After a short pause, `router.push()` writes `?search=` / `?category=` to the URL.
-  - The `/products` Server Component then refetches `GET /products?search=&category_id=` from
-    the API. Back/forward and shared links keep the same filters.
-- **Cart.** The cart is held in `ProductGrid` state and updated immutably (`[...prev, item]`,
-  `map`, `filter`). The summary's item count and total are derived from it, not stored.
-- **AddProductForm.** Controlled inputs with `validate()` on every render. Errors appear inline,
-  and the submit button stays disabled until the form is valid. New products are appended to
-  local state; saving to the API is Checkpoint 3.
-- **Errors.** `lib/api.ts` checks `res.ok` and throws. Each route's `error.tsx` shows a friendly
-  message and a **Try again** button (`retry()`).
-- **Nested layout.** Open DevTools → Console and click between `/products` and `/products/[id]`.
-  `[products/layout] mounted` is logged once. `unmounted` appears only after you leave the
-  products section.
-
-## 🎬 Demo evidence (`screenshots/checkpoint-2/`)
-
-| File | Shows |
-| --- | --- |
-| `01-home-5-products.png` | Home with 5 real products from the API, Home active in the nav |
-| `02-products-search-and-category.png` | Live search "celana" + category "Pakaian" at `/products?search=celana&category=2` |
-| `03-products-cart-and-form.png` | Cart count/total after Add to Cart, product added via the form, out-of-stock card |
-| `04-product-detail-dynamic-title.png` | `/products/2` with title "Mouse Logitech G502 \| RevoShop" |
-| `05-categories.png`, `06-orders.png` | Real categories (with product counts) and recent orders |
-| `07-products-mobile.png` | Mobile width (375px) |
-| `08-loading-skeleton.png` | `loading.tsx` skeleton (captured with `API_DEMO_DELAY_MS=3000`) |
-| `09-error-api-offline.png` | `error.tsx` with the Flask API stopped |
-
-To reproduce:
-- **Loading state:** set `API_DEMO_DELAY_MS=3000` in `.env.local` and restart `npm run dev`.
-- **Error state:** stop the Flask server and reload a page.
+- **Server vs Client.** Catalog pages are Server Components that `await` the API (`lib/api.ts`).
+  Client Components handle interactivity.
+- **Search + category filter.** Typing filters the list instantly. After a short pause,
+  `router.push()` writes `?search=` / `?category=` to the URL, and the `/products` Server
+  Component refetches `GET /products?search=&category_id=`.
+- **Errors / loading.** `lib/api.ts` checks `res.ok` and throws. Each route has `loading.tsx`
+  (skeleton) and `error.tsx` (friendly message + **Try again**).
+- **Nested layout.** `app/products/layout.tsx` stays mounted between `/products` and
+  `/products/[id]` (see `[products/layout] mounted` in the console).
+- Evidence screenshots: `screenshots/checkpoint-2/`.
 
 ---
 

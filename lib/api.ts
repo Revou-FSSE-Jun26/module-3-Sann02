@@ -1,21 +1,15 @@
 // ============================================================
 // Server-side data access for the RevoShop Flask API.
 // Imported only by Server Components (pages / generateMetadata), so every
-// request runs on the server. That keeps API_SECRET_KEY off the browser and
-// avoids CORS (the Flask API does not enable it).
+// request runs on the server and API_SECRET_KEY never reaches the browser.
+// Browser-side calls (auth, cart checkout, dashboard CRUD) live in
+// lib/apiClient.ts.
 // ============================================================
+import { ApiError } from "@/lib/errors";
 import type { Category, Order, Product } from "@/lib/types";
 
-/** Thrown for non-2xx responses so the route's error.tsx boundary can catch it. */
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public readonly status: number,
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
+// Thrown for non-2xx responses so the route's error.tsx boundary can catch it.
+export { ApiError };
 
 function getBaseUrl(): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;

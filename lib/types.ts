@@ -45,6 +45,60 @@ export interface Order {
   status: OrderStatus | (string & {});
   total_amount: number;
   created_at: string | null;
+  /** Included by GET /orders and GET /orders/:id. */
+  items?: OrderItem[];
+}
+
+/** One line of an order (order_items row joined with the product name). */
+export interface OrderItem {
+  id: number;
+  product_id: number;
+  product_name: string | null;
+  quantity: number;
+  price_at_purchase: number;
+}
+
+/** GET /orders/:id always returns the items. */
+export interface OrderWithItems extends Order {
+  items: OrderItem[];
+}
+
+/** Roles the API assigns: seeded admins, self-registered customers ("user" on older rows). */
+export type UserRole = "admin" | "customer" | (string & {});
+
+/** Public profile kept in AuthContext + localStorage. Never holds the password. */
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  role: UserRole;
+}
+
+/** POST /auth/login 200 response. */
+export interface LoginResponse {
+  user: User & { created_at?: string | null };
+  access_token: string;
+  token_type: string;
+}
+
+/** RegisterForm fields; confirmPassword is client-only and never sent. */
+export interface RegisterFormData {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+/** LoginForm fields. */
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+/** CategoryForm fields (POST/PUT /categories). */
+export interface CategoryFormData {
+  name: string;
+  description: string;
 }
 
 /** Stock state derived from stock_quantity; drives badge + button styling. */
@@ -56,7 +110,7 @@ export interface CartItem {
   quantity: number;
 }
 
-/** Fields POST /products expects (wired to local state in this checkpoint). */
+/** Fields POST /products and PUT /products/:id accept. */
 export interface ProductFormData {
   name: string;
   price: number;

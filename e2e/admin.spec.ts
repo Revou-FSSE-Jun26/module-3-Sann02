@@ -119,4 +119,13 @@ test.describe("Admin dashboard", () => {
     await expect(page.getByRole("columnheader", { name: "User" })).toBeVisible();
     await expect(page.getByTestId("order-row").first()).toContainText(/User #\d+/);
   });
+
+  test("admin cannot add to cart or access checkout", async ({ page }) => {
+    await page.goto("/products");
+    await expect(page.getByRole("button", { name: "Admins cannot buy" }).first()).toBeDisabled();
+    await expect(page.getByTestId("cart-count")).toHaveText("0");
+
+    await page.goto("/checkout");
+    await expect(page.getByTestId("checkout-admin-blocked")).toBeVisible();
+  });
 });

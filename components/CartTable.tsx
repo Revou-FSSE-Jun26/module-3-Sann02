@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Card from "@/components/Card";
 import QuantityCounter from "@/components/QuantityCounter";
+import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/utils";
 
 /** /cart: one row per item with quantity, subtotal and a remove button; checkout is disabled when empty. */
 export default function CartTable() {
+  const { isAdmin } = useAuth();
   const { items, itemCount, total, isReady, updateQuantity, removeItem, clearCart } = useCart();
   const router = useRouter();
   const isEmpty = items.length === 0;
@@ -117,12 +119,16 @@ export default function CartTable() {
           <button
             type="button"
             onClick={() => router.push("/checkout")}
-            disabled={isEmpty}
+            disabled={isEmpty || isAdmin}
             className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600"
           >
             Proceed to checkout
           </button>
-          {isEmpty && <p className="text-xs text-gray-500">Add an item to enable checkout.</p>}
+          {isAdmin ? (
+            <p className="text-xs text-gray-500">Admin accounts cannot place orders.</p>
+          ) : (
+            isEmpty && <p className="text-xs text-gray-500">Add an item to enable checkout.</p>
+          )}
         </div>
       </Card>
     </section>

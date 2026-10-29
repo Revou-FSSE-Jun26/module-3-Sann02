@@ -54,6 +54,19 @@ export default function CheckoutForm() {
     return <p role="status" className="text-sm text-gray-500">Loading your cart…</p>;
   }
 
+  // Direct visits must be blocked too; admins manage the shop, they don't buy.
+  if (currentUser?.role === "admin") {
+    return (
+      <Card className="mx-auto max-w-lg space-y-3 py-10 text-center" data-testid="checkout-admin-blocked">
+        <h1 className="text-xl font-semibold">Admins cannot check out</h1>
+        <p className="text-sm text-gray-500">Log in as a customer to place an order.</p>
+        <Link href="/dashboard" className="inline-block font-semibold text-blue-600 hover:underline">
+          Go to dashboard
+        </Link>
+      </Card>
+    );
+  }
+
   if (items.length === 0 && !submitting) {
     return (
       <Card className="mx-auto max-w-lg space-y-3 py-10 text-center">

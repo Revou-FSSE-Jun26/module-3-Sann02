@@ -21,7 +21,7 @@ interface AddToCartButtonProps {
  * Guests are sent to /login first; the cart belongs to a logged-in customer.
  */
 export default function AddToCartButton({ product, quantity = 1, onAdded, className }: AddToCartButtonProps) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isAdmin } = useAuth();
   const { addItem, items } = useCart();
   const router = useRouter();
 
@@ -46,6 +46,14 @@ export default function AddToCartButton({ product, quantity = 1, onAdded, classN
         : `Added ${added} × ${product.name} to your cart.`,
     );
     onAdded?.();
+  }
+
+  if (isAdmin) {
+    return (
+      <button type="button" disabled className={cn(getButtonClasses(false), className)}>
+        Admins cannot buy
+      </button>
+    );
   }
 
   if (outOfStock) {

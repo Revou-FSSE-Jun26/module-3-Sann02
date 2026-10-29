@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import QuantityCounter from "@/components/QuantityCounter";
+import { getProductImage } from "@/lib/productImages";
 import type { Product } from "@/lib/types";
 import { cn, formatPrice, getStockStatus } from "@/lib/utils";
 
@@ -52,16 +54,14 @@ export default function ProductCard({
         !inStock && "bg-gray-50",
       )}
     >
-      <div
-        aria-hidden="true"
-        className={cn(
-          "flex h-32 items-center justify-center rounded-lg text-3xl font-bold",
-          inStock
-            ? "bg-linear-to-br from-blue-100 to-indigo-100 text-blue-500"
-            : "bg-gray-200 text-gray-400",
-        )}
-      >
-        {product.name.charAt(0).toUpperCase()}
+      <div className="h-32 overflow-hidden rounded-lg bg-gray-100">
+        <Image
+          src={getProductImage(product.name)}
+          alt=""
+          width={640}
+          height={480}
+          className={cn("h-full w-full object-cover", !inStock && "opacity-50 grayscale")}
+        />
       </div>
 
       <div className="flex items-start justify-between gap-2">

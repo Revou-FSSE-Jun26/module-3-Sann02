@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import ProductPurchase from "@/components/ProductPurchase";
 import { getCategories, getProduct } from "@/lib/api";
+import { getProductImage } from "@/lib/productImages";
 import { formatDate, formatPrice, getStockStatus } from "@/lib/utils";
 
 /** "12" -> 12; anything that isn't a positive integer -> null. */
@@ -40,12 +42,14 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
       </Link>
 
       <Card className="grid gap-6 p-6 md:grid-cols-2">
-        <div
-          aria-hidden="true"
-          className="flex h-64 items-center justify-center rounded-xl bg-linear-to-br from-blue-100 to-indigo-100 text-7xl font-bold text-blue-500"
-        >
-          {product.name.charAt(0).toUpperCase()}
-        </div>
+        <Image
+          src={getProductImage(product.name)}
+          alt=""
+          width={640}
+          height={480}
+          priority
+          className="h-64 w-full rounded-xl object-cover"
+        />
 
         <div className="space-y-4">
           <div className="space-y-2">

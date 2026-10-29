@@ -27,7 +27,9 @@ and see every order from a dashboard. Every screen talks to the real API; nothin
 ### 👤 Logged out
 - **Home `/`**: 5 featured products. **Products `/products`**: live search + category filter
   synced to the URL (`?search=&category=`), refetched from the API.
-- **Product detail `/products/[id]`**: dynamic page title, quantity counter + Add to Cart.
+- **Product detail `/products/[id]`**: dynamic page title, product photo, quantity counter + Add to Cart.
+  Cards and detail pages show a photo matched to the product name (`lib/productImages.ts`), with
+  `public/products/placeholder.svg` for anything without a match.
 - **Categories `/categories`** with product counts.
 - **Register `/register`**: `RegisterForm` with 4 rules (username required, email format,
   password ≥ 8 chars, passwords match). On `201` the user is logged in and sent to `/`.
@@ -57,6 +59,8 @@ and see every order from a dashboard. Every screen talks to the real API; nothin
 - **`/dashboard/categories`**: category CRUD. `CreateCategoryForm` validates the name. Deleting
   a category that **still has products** is blocked (`409`) with a visible error.
 - **`/dashboard/orders`**: read-only overview of every user's orders, with a User column.
+- **Admins cannot buy**: Add to Cart is disabled ("Admins cannot buy"), `/checkout` is blocked,
+  and `POST /orders` returns `403` for an admin token.
 - **Toasts** (`react-hot-toast`) for success and error on every CRUD and cart action.
 
 ### Route guards
@@ -98,6 +102,7 @@ lib/
 ├── api.ts                   Server-side fetch helpers (Server Components)
 ├── apiClient.ts             Browser fetch helpers: auth, CRUD, orders (Bearer token)
 ├── errors.ts                ApiError (status-aware) + getErrorMessage()
+├── productImages.ts         product name → photo in public/products
 ├── types.ts                 API types + form types
 └── utils.ts                 formatting + Tailwind class helpers
 e2e/                         Playwright specs + helpers (screenshots.spec.ts captures the README images)
@@ -151,7 +156,7 @@ npm run build
 npm run test:e2e
 ```
 
-There are 23 tests in 4 specs. They run against the real API and create their own uniquely named
+There are 24 tests in 4 specs. They run against the real API and create their own uniquely named
 users, products and categories. Products and categories are deleted again at the end.
 
 | Spec | Covers |
@@ -159,12 +164,11 @@ users, products and categories. Products and categories are deleted again at the
 | `public.spec.ts` | home, search + URL, dynamic product title, categories, guest Add to Cart → `/login`, every protected route → `/login` |
 | `auth.spec.ts` | RegisterForm's 4 validation rules, register → `/` + refresh keeps the username, duplicate email, login 401 banner, empty-field errors, customer → `/` and blocked from `/dashboard*` |
 | `cart-checkout.spec.ts` | empty state + disabled checkout, add with quantity, persistence across refresh, remove, checkout → `POST /orders` → cart cleared → `/orders` → order detail |
-| `admin.spec.ts` | admin → `/dashboard`, product validate/create/edit/delete, **409 delete guard**, category validate/create/edit/delete + **linked-products guard**, all-orders overview |
+| `admin.spec.ts` | admin → `/dashboard`, product validate/create/edit/delete, **409 delete guard**, category validate/create/edit/delete + **linked-products guard**, all-orders overview, **admin blocked from Add to Cart and `/checkout`** |
 
-**Production run** against `https://revoshop-frontend.vercel.app` (Chromium/Edge, 1 worker):
-**23 passed**, 0 failed. The product CRUD test passed on its automatic retry after a slow
-first API response, which the config's `retries: 2` absorbs. The 3 skipped tests are
-`screenshots.spec.ts`, which only runs with `CAPTURE_SCREENSHOTS=1`.
+**Last verified run** (local build + local Flask API with a seeded SQLite DB, Chromium, 1 worker):
+**24 passed**, 0 failed. The 3 skipped tests are `screenshots.spec.ts`, which only runs with
+`CAPTURE_SCREENSHOTS=1`.
 
 The guard tests use seeded data: "Keyboard Mechanical" is in a pending order, and "Elektronik"
 has products. Override them with `E2E_GUARDED_PRODUCT` / `E2E_GUARDED_CATEGORY` and the admin
@@ -191,8 +195,9 @@ Regenerate with `CAPTURE_SCREENSHOTS=1 npx playwright test e2e/screenshots.spec.
 | ![Dashboard](screenshots/checkpoint-3/10-admin-dashboard.png) | ![Categories admin](screenshots/checkpoint-3/11-admin-categories.png) | ![Orders admin](screenshots/checkpoint-3/12-admin-orders.png) |
 
 ### Known limitations
-- The Flask API does not check the admin role on write endpoints or on `GET /orders` without a
-  token, so the admin pages are protected in the UI only (the Module 2 rubric made JWT optional).
+- The Flask API rejects admin users on `POST /orders`, but product and category writes still have
+  no role check, and `GET /orders` without a token returns all orders. The admin pages are
+  protected in the UI only (the Module 2 rubric made JWT optional).
 - The JWT is stored in `localStorage`. That's fine for this course, but a production app would
   prefer an httpOnly cookie.
 

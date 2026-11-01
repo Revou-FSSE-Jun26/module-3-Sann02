@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   // (async Server Component fetch + loading.tsx / error.tsx per route),
   // documented in node_modules/next/dist/docs/01-app/02-guides/caching-without-cache-components.md.
   cacheComponents: false,
+  experimental: {
+    agentUpgrade: "security",
+  },
   turbopack: {
     rules: {
       "*.css": {

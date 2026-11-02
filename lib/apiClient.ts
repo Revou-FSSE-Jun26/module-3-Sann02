@@ -16,11 +16,12 @@ import type {
   User,
 } from "@/lib/types";
 
+// Deployed RevoShop API. Fallback so a missing env var does not break the app
+// when NEXT_PUBLIC_API_BASE_URL was not configured on the host.
+const DEFAULT_API_BASE_URL = "https://module-2-sann02-hvbj.vercel.app";
+
 function baseUrl(): string {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!base) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not set. Copy .env.example to .env.local.");
-  }
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL || DEFAULT_API_BASE_URL;
   return base.replace(/\/+$/, "");
 }
 

@@ -11,11 +11,12 @@ import type { Category, Order, Product } from "@/lib/types";
 // Thrown for non-2xx responses so the route's error.tsx boundary can catch it.
 export { ApiError };
 
+// Deployed RevoShop API. Used as a fallback so a missing env var at build time
+// (e.g. on a fresh Vercel project) does not crash the build / data fetching.
+const DEFAULT_API_BASE_URL = "https://module-2-sann02-hvbj.vercel.app";
+
 function getBaseUrl(): string {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (!base) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not set. Copy .env.example to .env.local.");
-  }
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL || DEFAULT_API_BASE_URL;
   return base.replace(/\/+$/, "");
 }
 

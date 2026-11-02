@@ -13,6 +13,7 @@ export interface Product {
   description: string | null;
   price: number;
   stock_quantity: number;
+  image_url: string | null;
   created_at: string | null;
 }
 

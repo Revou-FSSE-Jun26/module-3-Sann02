@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Badge from "@/components/Badge";
-import Card from "@/components/Card";
+import { ReturnIcon, ShieldIcon, TruckIcon } from "@/components/Icons";
 import ProductPurchase from "@/components/ProductPurchase";
 import { getCategories, getProduct } from "@/lib/api";
 import { getProductImage } from "@/lib/productImages";
@@ -25,6 +25,12 @@ export async function generateMetadata({ params }: PageProps<"/products/[id]">):
   };
 }
 
+const PROMISES = [
+  { icon: TruckIcon, text: "Free shipping, arrives in 2 to 4 days" },
+  { icon: ReturnIcon, text: "Free 7-day returns" },
+  { icon: ShieldIcon, text: "Secure checkout, buyer protection" },
+];
+
 export default async function ProductDetailPage({ params }: PageProps<"/products/[id]">) {
   const id = parseId((await params).id);
   if (!id) notFound();
@@ -36,56 +42,80 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
   const status = getStockStatus(product.stock_quantity);
 
   return (
-    <article className="space-y-4">
-      <Link href="/products" className="text-sm font-medium text-blue-600 hover:underline">
+    <article className="space-y-6">
+      <Link
+        href="/products"
+        className="inline-flex text-sm font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800"
+      >
         &larr; Back to all products
       </Link>
 
-      <Card className="grid gap-6 p-6 md:grid-cols-2">
-        <Image
-          src={getProductImage(product.name)}
-          alt=""
-          width={640}
-          height={480}
-          priority
-          className="h-64 w-full rounded-xl object-cover"
-        />
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-card">
+          <Image
+            src={getProductImage(product)}
+            alt={product.name}
+            width={900}
+            height={900}
+            priority
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="aspect-square w-full object-cover"
+          />
+        </div>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
+        <div className="space-y-6">
+          <div className="space-y-3">
             {category && (
               <Link
                 href={`/products?category=${category.id}`}
-                className="text-sm font-medium text-blue-600 hover:underline"
+                className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 transition-colors duration-200 hover:bg-brand-100"
               >
                 {category.name}
               </Link>
             )}
-            <h1 className="text-3xl font-bold">{product.name}</h1>
-            <Badge variant={status} />
+            <h1 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">{product.name}</h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <Badge variant={status} />
+              <span className="text-sm text-slate-500">
+                {product.stock_quantity > 0 ? `${product.stock_quantity} units available` : "Currently unavailable"}
+              </span>
+            </div>
           </div>
 
-          <p className="text-3xl font-bold text-blue-700">{formatPrice(product.price)}</p>
+          <p className="font-display text-4xl font-bold text-slate-900">{formatPrice(product.price)}</p>
 
-          {product.description && <p className="text-gray-700">{product.description}</p>}
-          <ProductPurchase product={product} />
+          {product.description && (
+            <p className="max-w-prose leading-relaxed text-slate-600">{product.description}</p>
+          )}
 
-          <dl className="grid grid-cols-2 gap-3 rounded-lg bg-gray-50 p-4 text-sm">
-            <div>
-              <dt className="text-gray-500">Stock</dt>
-              <dd className="font-semibold">{product.stock_quantity} units</dd>
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-card">
+            <ProductPurchase product={product} />
+            <ul className="mt-5 space-y-3 border-t border-slate-100 pt-5">
+              {PROMISES.map(({ icon: Icon, text }) => (
+                <li key={text} className="flex items-center gap-3 text-sm text-slate-600">
+                  <Icon className="shrink-0 text-brand-600" />
+                  {text}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <dl className="grid grid-cols-3 gap-3 text-sm">
+            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200/80">
+              <dt className="text-slate-500">Stock</dt>
+              <dd className="font-semibold text-slate-900">{product.stock_quantity} units</dd>
             </div>
-            <div>
-              <dt className="text-gray-500">Product ID</dt>
-              <dd className="font-semibold">#{product.id}</dd>
+            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200/80">
+              <dt className="text-slate-500">Product ID</dt>
+              <dd className="font-semibold text-slate-900">#{product.id}</dd>
             </div>
-            <div className="col-span-2">
-              <dt className="text-gray-500">Added</dt>
-              <dd className="font-semibold">{formatDate(product.created_at)}</dd>
+            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200/80">
+              <dt className="text-slate-500">Added</dt>
+              <dd className="font-semibold text-slate-900">{formatDate(product.created_at)}</dd>
             </div>
           </dl>
         </div>
-      </Card>
+      </div>
     </article>
   );
 }

@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
   experimental: {
     agentUpgrade: "security",
   },
+  images: {
+    // Real product photos are hosted on Tokopedia's static CDNs.
+    remotePatterns: [
+      { protocol: "https", hostname: "**.tokopedia-static.net" },
+      { protocol: "https", hostname: "**.tokopedia.net" },
+    ],
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -7,7 +7,7 @@ import AddToCartButton from "@/components/AddToCartButton";
 import Badge from "@/components/Badge";
 import Card from "@/components/Card";
 import QuantityCounter from "@/components/QuantityCounter";
-import { getProductImage } from "@/lib/productImages";
+import { getPlaceholderImage, getProductImage } from "@/lib/productImages";
 import type { Product } from "@/lib/types";
 import { cn, formatPrice, getStockStatus } from "@/lib/utils";
 
@@ -31,19 +31,28 @@ export default function ProductCard({
   href,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
+  // Resolved image source. If the remote image_url fails to load (e.g. an
+  // expired CDN link), swap to the local keyword placeholder so the UI never
+  // shows a broken image.
+  const [imageSrc, setImageSrc] = useState(() => getProductImage(product));
 
   const status = getStockStatus(product.stock_quantity);
   const inStock = status !== "out-of-stock";
   // Never show more than what is in stock, even if the stock changed after a refetch.
   const safeQuantity = Math.min(quantity, Math.max(product.stock_quantity, 1));
 
+  const fallbackSrc = getPlaceholderImage(product.name);
   const image = (
     <Image
-      src={getProductImage(product)}
+      src={imageSrc}
       alt=""
       width={640}
       height={640}
       sizes="(min-width: 1280px) 20vw, (min-width: 640px) 33vw, 100vw"
+      onError={() => {
+        // Guard against an infinite loop if the placeholder itself fails.
+        if (imageSrc !== fallbackSrc) setImageSrc(fallbackSrc);
+      }}
       className={cn(
         "aspect-square h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-105",
         !inStock && "opacity-60 grayscale",

@@ -1,15 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Card from "@/components/Card";
 import { ArrowRightIcon, CartIcon, ShieldIcon } from "@/components/Icons";
+import ProductImage from "@/components/ProductImage";
 import QuantityCounter from "@/components/QuantityCounter";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
-import { getProductImage } from "@/lib/productImages";
 import { buttonStyles, cn, formatPrice } from "@/lib/utils";
 
 /** /cart: one row per item with quantity, subtotal and a remove button; checkout is disabled when empty. */
@@ -86,9 +85,8 @@ export default function CartTable() {
                   <tr key={product.id} data-testid="cart-row">
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
-                        <Image
-                          src={getProductImage(product)}
-                          alt=""
+                        <ProductImage
+                          product={product}
                           width={56}
                           height={56}
                           className="h-14 w-14 shrink-0 rounded-xl object-cover ring-1 ring-slate-200"

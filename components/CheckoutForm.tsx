@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -8,11 +7,11 @@ import toast from "react-hot-toast";
 import Card from "@/components/Card";
 import { FormError } from "@/components/FormField";
 import { ShieldIcon, TruckIcon, UserIcon } from "@/components/Icons";
+import ProductImage from "@/components/ProductImage";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { createOrder } from "@/lib/apiClient";
 import { ApiError, getErrorMessage } from "@/lib/errors";
-import { getProductImage } from "@/lib/productImages";
 import { buttonStyles, cn, formatPrice } from "@/lib/utils";
 
 /**
@@ -127,9 +126,8 @@ export default function CheckoutForm() {
           <ul className="divide-y divide-slate-100 text-sm">
             {items.map(({ product, quantity }) => (
               <li key={product.id} className="flex items-center gap-3 py-3">
-                <Image
-                  src={getProductImage(product)}
-                  alt=""
+                <ProductImage
+                  product={product}
                   width={48}
                   height={48}
                   className="h-12 w-12 shrink-0 rounded-lg object-cover ring-1 ring-slate-200"

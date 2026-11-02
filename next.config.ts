@@ -10,8 +10,10 @@ const nextConfig: NextConfig = {
     agentUpgrade: "security",
   },
   images: {
-    // Real product photos are hosted on Tokopedia's static CDNs.
+    // Product photos. Unsplash is the current stable source (hotlink-friendly,
+    // non-expiring URLs). Tokopedia CDNs are kept for any legacy image_url rows.
     remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.tokopedia-static.net" },
       { protocol: "https", hostname: "**.tokopedia.net" },
     ],

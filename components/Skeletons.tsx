@@ -1,12 +1,12 @@
 /** Pulsing placeholders shaped like the real content; used by loading.tsx files. */
 
 function Block({ className }: { className: string }) {
-  return <div className={`animate-pulse rounded-lg bg-gray-200 ${className}`} />;
+  return <div className={`animate-pulse rounded-lg bg-slate-200 ${className}`} />;
 }
 
 export function ProductCardSkeleton() {
   return (
-    <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+    <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
       <Block className="h-32" />
       <Block className="h-4 w-3/4" />
       <Block className="h-4 w-1/2" />
@@ -39,7 +39,7 @@ export function ListSkeleton({ rows = 5 }: { rows?: number }) {
 
 export function LoadingStatus({ label }: { label: string }) {
   return (
-    <p role="status" className="text-sm font-medium text-blue-600">
+    <p role="status" className="text-sm font-medium text-brand-600">
       Loading {label}…
     </p>
   );

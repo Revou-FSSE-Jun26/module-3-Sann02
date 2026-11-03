@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
+import { CartIcon } from "@/components/Icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { cn } from "@/lib/utils";
@@ -35,9 +37,11 @@ export default function NavBar() {
   if (isLoggedIn) links.push({ href: "/orders", label: "My Orders" });
   if (isAdmin) links.push({ href: "/dashboard", label: "Dashboard" });
 
+  const cartActive = isActive(pathname, "/cart");
+
   return (
     <nav aria-label="Main">
-      <ul className="flex flex-wrap items-center gap-1 sm:gap-2">
+      <ul className="flex flex-wrap items-center gap-1">
         {links.map(({ href, label }) => (
           <li key={href}>
             <NavItem href={href} active={isActive(pathname, href)}>
@@ -46,30 +50,49 @@ export default function NavBar() {
           </li>
         ))}
         <li>
-          <NavItem href="/cart" active={isActive(pathname, "/cart")}>
+          <Link
+            href="/cart"
+            aria-current={cartActive ? "page" : undefined}
+            className={cn(
+              "relative inline-flex min-h-10 items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors duration-200",
+              cartActive
+                ? "bg-brand-600 text-white"
+                : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+            )}
+          >
+            <CartIcon />
             Cart
             <span
               data-testid="cart-count"
               aria-label={`${itemCount} items in cart`}
-              className="ml-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-blue-100 px-1.5 text-xs font-semibold text-blue-700"
+              className={cn(
+                "inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums",
+                cartActive
+                  ? "bg-white text-brand-700"
+                  : itemCount > 0
+                    ? "bg-accent-500 text-slate-950"
+                    : "bg-slate-200 text-slate-600",
+              )}
             >
               {itemCount}
             </span>
-          </NavItem>
+          </Link>
         </li>
       </ul>
     </nav>
   );
 }
 
-function NavItem({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+function NavItem({ href, active, children }: { href: string; active: boolean; children: ReactNode }) {
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "inline-flex items-center rounded-lg px-3 py-2 text-sm font-medium transition",
-        active ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+        "inline-flex min-h-10 items-center rounded-xl px-3 py-2 text-sm font-semibold transition-colors duration-200",
+        active
+          ? "bg-brand-50 text-brand-700"
+          : "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
       )}
     >
       {children}

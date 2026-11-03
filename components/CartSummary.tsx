@@ -24,14 +24,14 @@ export default function CartSummary({
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
   return (
-    <Card as="aside" className="space-y-3">
+    <Card as="aside" className="space-y-4 p-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Cart</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Cart</h2>
         {items.length > 0 && onClear && (
           <button
             type="button"
             onClick={onClear}
-            className="text-sm font-medium text-red-600 hover:underline"
+            className="text-sm font-semibold text-rose-600 transition-colors duration-200 hover:text-rose-700"
           >
             Clear
           </button>
@@ -39,14 +39,14 @@ export default function CartSummary({
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-gray-500">Your cart is empty. Add a product to get started.</p>
+        <p className="text-sm text-slate-500">Your cart is empty. Add a product to get started.</p>
       ) : (
-        <ul className="divide-y divide-gray-100">
+        <ul className="divide-y divide-slate-100">
           {items.map(({ product, quantity }) => (
             <li key={product.id} className="flex items-center justify-between gap-2 py-2 text-sm">
               <div>
-                <p className="font-medium text-gray-900">{product.name}</p>
-                <p className="text-gray-500">
+                <p className="font-medium text-slate-900">{product.name}</p>
+                <p className="text-slate-500">
                   {quantity} &times; {formatPrice(product.price, currency)}
                 </p>
               </div>
@@ -54,7 +54,7 @@ export default function CartSummary({
                 <button
                   type="button"
                   onClick={() => onRemove(product.id)}
-                  className="text-xs font-medium text-gray-500 hover:text-red-600"
+                  className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-500 transition-colors duration-200 hover:bg-rose-50 hover:text-rose-600"
                   aria-label={`Remove ${product.name} from cart`}
                 >
                   Remove
@@ -65,20 +65,20 @@ export default function CartSummary({
         </ul>
       )}
 
-      <dl className="space-y-1 border-t border-gray-200 pt-3 text-sm" aria-live="polite">
+      <dl className="space-y-1 border-t border-slate-200 pt-3 text-sm" aria-live="polite">
         <div className="flex justify-between">
-          <dt className="text-gray-600">Items in cart</dt>
+          <dt className="text-slate-600">Items in cart</dt>
           <dd className="font-semibold tabular-nums">{itemCount}</dd>
         </div>
         <div className="flex justify-between text-base">
           <dt className="font-semibold">Total</dt>
-          <dd className="font-bold text-blue-700 tabular-nums">{formatPrice(total, currency)}</dd>
+          <dd className="font-display text-lg font-bold tabular-nums text-slate-900">{formatPrice(total, currency)}</dd>
         </div>
       </dl>
       {showCartLink && (
         <Link
           href="/cart"
-          className="block rounded-lg bg-gray-900 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-gray-700"
+          className="flex min-h-11 items-center justify-center rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700"
         >
           View cart
         </Link>

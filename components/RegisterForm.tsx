@@ -73,8 +73,8 @@ export default function RegisterForm() {
   return (
     <Card as="section" className="mx-auto w-full max-w-md space-y-4 p-6">
       <div>
-        <h1 className="text-2xl font-bold">Create account</h1>
-        <p className="text-sm text-gray-500">Register to add products to your cart and check out.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Create account</h1>
+        <p className="text-sm text-slate-500">Register to add products to your cart and check out.</p>
       </div>
       <form onSubmit={handleSubmit} noValidate className="space-y-3" aria-label="Register">
         <FormField
@@ -116,14 +116,14 @@ export default function RegisterForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full min-h-11 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "Creating account…" : "Register"}
         </button>
       </form>
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-slate-600">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-blue-600 hover:underline">
+        <Link href="/login" className="font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800">
           Log in
         </Link>
       </p>

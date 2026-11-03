@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import AuthShell from "@/components/AuthShell";
 import LoginForm from "@/components/LoginForm";
 import PublicOnlyRoute from "@/components/PublicOnlyRoute";
 
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <PublicOnlyRoute>
-      <LoginForm />
+      <AuthShell>
+        <LoginForm />
+      </AuthShell>
     </PublicOnlyRoute>
   );
 }

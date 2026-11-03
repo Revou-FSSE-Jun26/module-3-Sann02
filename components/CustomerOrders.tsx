@@ -24,10 +24,10 @@ export default function CustomerOrders() {
   return (
     <section aria-labelledby="orders-heading" className="space-y-4">
       <div>
-        <h1 id="orders-heading" className="text-2xl font-bold">
+        <h1 id="orders-heading" className="text-3xl font-bold text-slate-900">
           My orders
         </h1>
-        <p className="text-sm text-gray-500">Orders placed by {currentUser?.username}. Click a row for details.</p>
+        <p className="text-sm text-slate-500">Orders placed by {currentUser?.username}. Click a row for details.</p>
       </div>
       {loading ? (
         <ListSkeleton rows={3} />
@@ -38,7 +38,7 @@ export default function CustomerOrders() {
           <OrdersTable orders={orders ?? []} linkRows emptyMessage="You haven't placed any orders yet." />
           {orders?.length === 0 && (
             <p className="text-center text-sm">
-              <Link href="/products" className="font-semibold text-blue-600 hover:underline">
+              <Link href="/products" className="font-semibold text-brand-600 hover:underline">
                 Start shopping
               </Link>
             </p>

@@ -1,1 +1,72 @@
 @import "tailwindcss";
+
+/*
+ * RevoShop design tokens (ui-ux-pro-max e-commerce system).
+ * brand  = trustworthy blue for primary actions, links and active states.
+ * accent = warm orange for promotions and urgency (sale, low stock).
+ * Fonts come from next/font in app/layout.tsx (Rubik for headings,
+ * Nunito Sans for body) and are exposed as CSS variables.
+ */
+@theme {
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #dae6ff;
+  --color-brand-200: #bdd3ff;
+  --color-brand-300: #90b6ff;
+  --color-brand-400: #5c8dfc;
+  --color-brand-500: #3866f5;
+  --color-brand-600: #2448e0;
+  --color-brand-700: #1c38b8;
+  --color-brand-800: #1d3394;
+  --color-brand-900: #1e3075;
+  --color-brand-950: #161e47;
+
+  --color-accent-50: #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+  --color-accent-700: #c2410c;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-card-hover: 0 10px 25px -8px rgb(15 23 42 / 0.18);
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-100);
+    color: var(--color-brand-900);
+  }
+
+  /* Visible keyboard focus everywhere; mouse clicks don't show it. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-600);
+    outline-offset: 2px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,10 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
-import { acceptDialogs, loginAsAdmin, uid } from "./helpers";
+import { acceptDialogs, findGuardedTargets, loginAsAdmin, uid } from "./helpers";
 
-/** A product that sits in a seeded *pending* order, so the API refuses to delete it. */
-const PRODUCT_IN_ACTIVE_ORDER = process.env.E2E_GUARDED_PRODUCT ?? "Keyboard Mechanical";
-/** A seeded category that still has products. */
-const CATEGORY_WITH_PRODUCTS = process.env.E2E_GUARDED_CATEGORY ?? "Elektronik";
+
 
 function productRow(page: Page, name: string) {
   return page.getByTestId("product-row").filter({ has: page.getByRole("cell", { name, exact: true }) });
@@ -64,7 +61,9 @@ test.describe("Admin dashboard", () => {
     await expect(productRow(page, renamed)).toHaveCount(0);
   });
 
-  test("deleting a product with active orders shows a visible error", async ({ page }) => {
+  test("deleting a product with active orders shows a visible error", async ({ page, request }) => {
+    // Read live data so the test survives renamed or re-seeded products.
+    const { product: PRODUCT_IN_ACTIVE_ORDER } = await findGuardedTargets(request);
     const row = productRow(page, PRODUCT_IN_ACTIVE_ORDER);
     await row.getByRole("button", { name: `Delete ${PRODUCT_IN_ACTIVE_ORDER}` }).click();
     await expect(
@@ -73,7 +72,8 @@ test.describe("Admin dashboard", () => {
     await expect(row).toBeVisible();
   });
 
-  test("category CRUD with name validation and the linked-products guard", async ({ page }) => {
+  test("category CRUD with name validation and the linked-products guard", async ({ page, request }) => {
+    const { category: CATEGORY_WITH_PRODUCTS } = await findGuardedTargets(request);
     await page.getByRole("link", { name: "Manage categories" }).click();
     await expect(page).toHaveURL(/\/dashboard\/categories$/);
     const form = page.getByRole("form", { name: "New category" });

@@ -17,15 +17,23 @@ test.describe("Logged-out visitor", () => {
     const cards = page.locator("article");
     await expect(cards.first()).toBeVisible();
 
+    const before = await cards.count();
     await page.getByLabel("Search products").fill("mouse");
     await expect(page).toHaveURL(/search=mouse/);
-    await expect(cards).toHaveCount(1);
-    await expect(cards.first()).toContainText(/mouse/i);
+    // The catalog changes over time, so check the filter itself, not an exact count:
+    // fewer cards than before, and every remaining title mentions "mouse".
+    await expect(async () => {
+      const titles = await page.locator("article h3").allTextContents();
+      expect(titles.length).toBeGreaterThan(0);
+      expect(titles.length).toBeLessThan(before);
+      for (const title of titles) expect(title).toMatch(/mouse/i);
+    }).toPass();
   });
 
   test("product detail page has a dynamic title", async ({ page }) => {
     await page.goto("/products");
-    const firstLink = page.locator('article a[href^="/products/"]').first();
+    // The title link (the image link is aria-hidden and has no text).
+    const firstLink = page.locator("article h3 a").first();
     const name = (await firstLink.textContent())?.trim() ?? "";
     await firstLink.click();
     await expect(page).toHaveURL(/\/products\/\d+$/);

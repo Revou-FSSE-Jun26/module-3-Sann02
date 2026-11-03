@@ -54,7 +54,7 @@ export function validateProduct(data: ProductFormData): ProductFormErrors {
 }
 
 const inputClasses =
-  "w-full rounded-lg border bg-white px-3 py-2 text-sm focus:ring-2 focus:outline-none";
+  "min-h-11 w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm transition-colors duration-200 placeholder:text-slate-400 focus:outline-none focus:ring-4";
 
 const ALL_TOUCHED: Touched = {
   name: true,
@@ -133,8 +133,8 @@ export default function AddProductForm({
         className: cn(
           inputClasses,
           error
-            ? "border-red-400 focus:ring-red-200"
-            : "border-gray-300 focus:border-blue-500 focus:ring-blue-200",
+            ? "border-rose-400 focus:border-rose-500 focus:ring-rose-100"
+            : "border-slate-300 focus:border-brand-500 focus:ring-brand-100",
         ),
       },
     };
@@ -148,7 +148,7 @@ export default function AddProductForm({
 
   const errorText = (f: { errorId: string; error?: string }) =>
     f.error && (
-      <p id={f.errorId} className="mt-1 text-xs text-red-600">
+      <p id={f.errorId} className="mt-1.5 text-xs font-medium text-rose-600">
         {f.error}
       </p>
     );
@@ -156,12 +156,12 @@ export default function AddProductForm({
   return (
     <Card as="section" className="space-y-3">
       <div>
-        <h2 className="text-lg font-semibold">{title}</h2>
-        {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+        <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+        {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
       </div>
       <form onSubmit={handleSubmit} noValidate className="space-y-3" aria-label={title}>
         <div>
-          <label htmlFor={nameField.id} className="mb-1 block text-sm font-medium">
+          <label htmlFor={nameField.id} className="mb-1.5 block text-sm font-semibold text-slate-700">
             Name
           </label>
           <input
@@ -175,7 +175,7 @@ export default function AddProductForm({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor={priceField.id} className="mb-1 block text-sm font-medium">
+            <label htmlFor={priceField.id} className="mb-1.5 block text-sm font-semibold text-slate-700">
               Price (Rp)
             </label>
             <input
@@ -189,7 +189,7 @@ export default function AddProductForm({
             {errorText(priceField)}
           </div>
           <div>
-            <label htmlFor={stockField.id} className="mb-1 block text-sm font-medium">
+            <label htmlFor={stockField.id} className="mb-1.5 block text-sm font-semibold text-slate-700">
               Stock
             </label>
             <input
@@ -206,7 +206,7 @@ export default function AddProductForm({
         </div>
 
         <div>
-          <label htmlFor={categoryField.id} className="mb-1 block text-sm font-medium">
+          <label htmlFor={categoryField.id} className="mb-1.5 block text-sm font-semibold text-slate-700">
             Category
           </label>
           <select
@@ -225,8 +225,8 @@ export default function AddProductForm({
         </div>
 
         <div>
-          <label htmlFor={descriptionField.id} className="mb-1 block text-sm font-medium">
-            Description <span className="font-normal text-gray-500">(optional)</span>
+          <label htmlFor={descriptionField.id} className="mb-1.5 block text-sm font-semibold text-slate-700">
+            Description <span className="font-normal text-slate-500">(optional)</span>
           </label>
           <textarea
             rows={2}
@@ -244,7 +244,7 @@ export default function AddProductForm({
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+              className="flex-1 min-h-11 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-50"
             >
               Cancel
             </button>
@@ -252,7 +252,7 @@ export default function AddProductForm({
           <button
             type="submit"
             disabled={submitting}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex-1 min-h-11 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? "Saving…" : submitLabel}
           </button>

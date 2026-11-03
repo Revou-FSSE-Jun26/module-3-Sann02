@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type APIRequestContext, type Page } from "@playwright/test";
 
 /** Seeded admin (revoshop-backend/helper/seed.py). Override for other environments. */
 export const ADMIN = {
@@ -45,6 +45,53 @@ export async function login(page: Page, email: string, password: string): Promis
 export async function loginAsAdmin(page: Page): Promise<void> {
   await login(page, ADMIN.email, ADMIN.password);
   await expect(page).toHaveURL(/\/dashboard$/);
+}
+
+/** API the deployed app talks to; override with E2E_API_BASE_URL for other environments. */
+export const API_BASE_URL = (
+  process.env.E2E_API_BASE_URL ??
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  "https://module-2-sann02-hvbj.vercel.app"
+).replace(/\/+$/, "");
+
+interface ApiOrder {
+  status: string;
+  items?: { product_id: number }[];
+}
+
+/**
+ * Pick delete-guard targets from live data instead of hard-coding names that
+ * can be renamed or removed: a product inside an active (not completed or
+ * cancelled) order, and a category that still has products.
+ */
+export async function findGuardedTargets(
+  request: APIRequestContext,
+): Promise<{ product: string; category: string }> {
+  const get = async <T>(path: string): Promise<T> => {
+    const res = await request.get(`${API_BASE_URL}${path}`);
+    expect(res.ok(), `GET ${path} -> ${res.status()}`).toBeTruthy();
+    return (await res.json()) as T;
+  };
+  const [orders, products, categories] = await Promise.all([
+    get<ApiOrder[]>("/orders"),
+    get<{ id: number; name: string; category_id: number }[]>("/products"),
+    get<{ id: number; name: string }[]>("/categories"),
+  ]);
+
+  const activeIds = new Set(
+    orders
+      .filter((o) => o.status !== "completed" && o.status !== "cancelled")
+      .flatMap((o) => (o.items ?? []).map((i) => i.product_id)),
+  );
+  const product = process.env.E2E_GUARDED_PRODUCT ?? products.find((p) => activeIds.has(p.id))?.name;
+  const usedCategoryIds = new Set(products.map((p) => p.category_id));
+  const category =
+    process.env.E2E_GUARDED_CATEGORY ?? categories.find((c) => usedCategoryIds.has(c.id))?.name;
+
+  if (!product || !category) {
+    throw new Error("No product in an active order or no category with products; seed the database first.");
+  }
+  return { product, category };
 }
 
 /** Accept the window.confirm() shown before deletes. */

@@ -16,10 +16,10 @@ export default function QuantityCounter({
   label,
 }: QuantityCounterProps) {
   const buttonClasses =
-    "flex h-8 w-8 items-center justify-center rounded-md border border-gray-300 text-lg leading-none text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40";
+    "flex h-9 w-9 items-center justify-center rounded-lg text-lg leading-none text-slate-700 transition-colors duration-200 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40";
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center rounded-xl border border-slate-300 bg-white p-0.5">
       <button
         type="button"
         className={buttonClasses}
@@ -29,7 +29,7 @@ export default function QuantityCounter({
       >
         &minus;
       </button>
-      <span className="w-8 text-center font-semibold tabular-nums" aria-live="polite">
+      <span className="w-7 text-center text-sm font-bold tabular-nums" aria-live="polite">
         {value}
       </span>
       <button

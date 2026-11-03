@@ -21,7 +21,12 @@ export default function ProductPurchase({ product }: { product: Product }) {
         onChange={setQuantity}
         label={product.name}
       />
-      <AddToCartButton product={product} quantity={quantity} onAdded={() => setQuantity(1)} />
+      <AddToCartButton
+        product={product}
+        quantity={quantity}
+        onAdded={() => setQuantity(1)}
+        className="min-h-12 flex-1 px-6 text-base sm:flex-none"
+      />
     </div>
   );
 }

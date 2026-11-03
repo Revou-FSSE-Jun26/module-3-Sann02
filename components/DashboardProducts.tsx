@@ -62,17 +62,20 @@ export default function DashboardProducts() {
     <section aria-labelledby="dashboard-heading" className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         <div className="mr-auto">
-          <h1 id="dashboard-heading" className="text-2xl font-bold">
+          <h1 id="dashboard-heading" className="text-3xl font-bold text-slate-900">
             Products
           </h1>
-          <p className="text-sm text-gray-500">
-            Signed in as <span className="font-medium text-gray-700">{currentUser?.username}</span>{" "}
-            <span className="rounded-full bg-gray-900 px-2 py-0.5 text-xs font-semibold text-white">
+          <p className="text-sm text-slate-500">
+            Signed in as <span className="font-medium text-slate-700">{currentUser?.username}</span>{" "}
+            <span className="rounded-full bg-slate-900 px-2 py-0.5 text-xs font-semibold text-white">
               {currentUser?.role}
             </span>
           </p>
         </div>
-        <Link href="/dashboard/categories" className="text-sm font-medium text-blue-600 hover:underline">
+        <Link
+          href="/dashboard/categories"
+          className="text-sm font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800"
+        >
           Manage categories
         </Link>
         <button
@@ -82,11 +85,13 @@ export default function DashboardProducts() {
             setEditing(null);
           }}
           aria-expanded={showCreate}
-          className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white hover:bg-gray-700"
+          className="min-h-11 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700"
         >
           {showCreate ? "Close form" : "+ New product"}
         </button>
       </div>
+
+      {data && <InventoryStats products={data.products} />}
 
       {data && showCreate && (
         <CreateProductForm
@@ -120,33 +125,33 @@ export default function DashboardProducts() {
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[720px] text-sm" aria-label="Products">
-            <thead className="bg-gray-50 text-left text-gray-600">
+            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
               <tr>
-                <th scope="col" className="p-3 font-semibold">Name</th>
-                <th scope="col" className="p-3 font-semibold">Price</th>
-                <th scope="col" className="p-3 font-semibold">Stock</th>
-                <th scope="col" className="p-3 font-semibold">Category</th>
-                <th scope="col" className="p-3 text-right font-semibold">Actions</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Name</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Price</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Stock</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Category</th>
+                <th scope="col" className="px-4 py-3 text-right font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {data?.products.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-gray-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
                     No products yet. Create the first one.
                   </td>
                 </tr>
               )}
               {data?.products.map((product) => (
-                <tr key={product.id} className="border-t border-gray-100" data-testid="product-row">
-                  <td className="p-3 font-medium">{product.name}</td>
-                  <td className="p-3 tabular-nums">{formatPrice(product.price)}</td>
-                  <td className="p-3">
+                <tr key={product.id} className="border-t border-slate-100" data-testid="product-row">
+                  <td className="px-4 py-3 font-medium">{product.name}</td>
+                  <td className="px-4 py-3 tabular-nums">{formatPrice(product.price)}</td>
+                  <td className="px-4 py-3">
                     <span className="mr-2 tabular-nums">{product.stock_quantity}</span>
                     <Badge variant={getStockStatus(product.stock_quantity)} />
                   </td>
-                  <td className="p-3">{categoryName(product.category_id)}</td>
-                  <td className="p-3">
+                  <td className="px-4 py-3">{categoryName(product.category_id)}</td>
+                  <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
@@ -155,7 +160,7 @@ export default function DashboardProducts() {
                           setShowCreate(false);
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         }}
-                        className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold hover:bg-gray-100"
+                        className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100"
                         aria-label={`Edit ${product.name}`}
                       >
                         Edit
@@ -164,7 +169,7 @@ export default function DashboardProducts() {
                         type="button"
                         onClick={() => handleDelete(product)}
                         disabled={deletingId === product.id}
-                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                        className="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-50"
                         aria-label={`Delete ${product.name}`}
                       >
                         {deletingId === product.id ? "Deleting…" : "Delete"}
@@ -178,5 +183,30 @@ export default function DashboardProducts() {
         </Card>
       )}
     </section>
+  );
+}
+
+/** Overview cards derived from the product list (no extra requests). */
+function InventoryStats({ products }: { products: Product[] }) {
+  const lowStock = products.filter((p) => getStockStatus(p.stock_quantity) === "low-stock").length;
+  const outOfStock = products.filter((p) => p.stock_quantity <= 0).length;
+  const value = products.reduce((sum, p) => sum + p.price * p.stock_quantity, 0);
+
+  const stats = [
+    { label: "Total items", value: String(products.length), tone: "text-slate-900" },
+    { label: "Low stock", value: String(lowStock), tone: "text-accent-700" },
+    { label: "Sold out", value: String(outOfStock), tone: "text-rose-700" },
+    { label: "Inventory value", value: formatPrice(value), tone: "text-slate-900" },
+  ];
+
+  return (
+    <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {stats.map((stat) => (
+        <div key={stat.label} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card">
+          <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">{stat.label}</dt>
+          <dd className={`mt-1 font-display text-2xl font-bold tabular-nums ${stat.tone}`}>{stat.value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

@@ -71,8 +71,8 @@ export default function LoginForm() {
   return (
     <Card as="section" className="mx-auto w-full max-w-md space-y-4 p-6">
       <div>
-        <h1 className="text-2xl font-bold">Login</h1>
-        <p className="text-sm text-gray-500">Admins land on the dashboard, customers on the home page.</p>
+        <h1 className="text-3xl font-bold text-slate-900">Login</h1>
+        <p className="text-sm text-slate-500">Admins land on the dashboard, customers on the home page.</p>
       </div>
       <form onSubmit={handleSubmit} noValidate className="space-y-3" aria-label="Login">
         <FormField
@@ -99,14 +99,14 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full min-h-11 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? "Signing in…" : "Login"}
         </button>
       </form>
-      <p className="text-center text-sm text-gray-600">
+      <p className="text-center text-sm text-slate-600">
         New to RevoShop?{" "}
-        <Link href="/register" className="font-semibold text-blue-600 hover:underline">
+        <Link href="/register" className="font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800">
           Create an account
         </Link>
       </p>

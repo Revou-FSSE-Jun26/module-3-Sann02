@@ -75,10 +75,10 @@ export default function DashboardCategories() {
   return (
     <section aria-labelledby="categories-admin-heading" className="space-y-4">
       <div>
-        <h1 id="categories-admin-heading" className="text-2xl font-bold">
+        <h1 id="categories-admin-heading" className="text-3xl font-bold text-slate-900">
           Categories
         </h1>
-        <p className="text-sm text-gray-500">A category can only be deleted once no products use it.</p>
+        <p className="text-sm text-slate-500">A category can only be deleted once no products use it.</p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
@@ -91,26 +91,26 @@ export default function DashboardCategories() {
           ) : (
             <Card className="overflow-x-auto p-0">
               <table className="w-full min-w-[520px] text-sm" aria-label="Categories">
-                <thead className="bg-gray-50 text-left text-gray-600">
+                <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
                   <tr>
-                    <th scope="col" className="p-3 font-semibold">Name</th>
-                    <th scope="col" className="p-3 font-semibold">Description</th>
-                    <th scope="col" className="p-3 font-semibold">Products</th>
-                    <th scope="col" className="p-3 text-right font-semibold">Actions</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Name</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Description</th>
+                    <th scope="col" className="px-4 py-3 font-semibold">Products</th>
+                    <th scope="col" className="px-4 py-3 text-right font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.categories.map((category) => (
-                    <tr key={category.id} className="border-t border-gray-100" data-testid="category-row">
-                      <td className="p-3 font-medium">{category.name}</td>
-                      <td className="p-3 text-gray-600">{category.description || "-"}</td>
-                      <td className="p-3 tabular-nums">{data.counts[category.id] ?? 0}</td>
-                      <td className="p-3">
+                    <tr key={category.id} className="border-t border-slate-100" data-testid="category-row">
+                      <td className="px-4 py-3 font-medium">{category.name}</td>
+                      <td className="px-4 py-3 text-slate-600">{category.description || "-"}</td>
+                      <td className="px-4 py-3 tabular-nums">{data.counts[category.id] ?? 0}</td>
+                      <td className="px-4 py-3">
                         <div className="flex justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => setEditing(category)}
-                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold hover:bg-gray-100"
+                            className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100"
                             aria-label={`Edit ${category.name}`}
                           >
                             Edit
@@ -119,7 +119,7 @@ export default function DashboardCategories() {
                             type="button"
                             onClick={() => handleDelete(category)}
                             disabled={deletingId === category.id}
-                            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50"
+                            className="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-50"
                             aria-label={`Delete ${category.name}`}
                           >
                             {deletingId === category.id ? "Deleting…" : "Delete"}

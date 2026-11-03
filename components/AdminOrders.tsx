@@ -21,10 +21,10 @@ export default function AdminOrders() {
   return (
     <section aria-labelledby="admin-orders-heading" className="space-y-4">
       <div>
-        <h1 id="admin-orders-heading" className="text-2xl font-bold">
+        <h1 id="admin-orders-heading" className="text-3xl font-bold text-slate-900">
           All orders
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-slate-500">
           {orders ? `${orders.length} orders · ${formatPrice(revenue)} total` : "Every order across all users."}
         </p>
       </div>

@@ -4,7 +4,7 @@ export default function ProductDetailLoading() {
   return (
     <div className="space-y-4">
       <LoadingStatus label="product" />
-      <div className="grid gap-6 rounded-xl border border-gray-200 bg-white p-6 md:grid-cols-2">
+      <div className="grid gap-6 rounded-xl border border-slate-200 bg-white p-6 md:grid-cols-2">
         <SkeletonBlock className="h-64" />
         <div className="space-y-3">
           <SkeletonBlock className="h-8 w-3/4" />

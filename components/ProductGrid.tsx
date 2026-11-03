@@ -95,13 +95,16 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
   const activeCategory = categories.find((c) => String(c.id) === categoryId);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <section aria-labelledby="catalog-heading" className="space-y-4">
-        <h1 id="catalog-heading" className="text-2xl font-bold">
-          Products
-        </h1>
+    <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
+      <section aria-labelledby="catalog-heading" className="space-y-5">
+        <div>
+          <h1 id="catalog-heading" className="text-3xl font-bold text-slate-900">
+            Products
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">Browse the full catalog, live from the RevoShop API.</p>
+        </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+        <div className="flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card sm:flex-row sm:items-end">
           <SearchBar
             value={query}
             onChange={setQuery}
@@ -114,7 +117,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
           />
         </div>
 
-        <p className="text-sm text-gray-600" aria-live="polite">
+        <p className="text-sm text-slate-600" aria-live="polite">
           {urlSearch || activeCategory ? (
             <>
               Filtering by{" "}
@@ -127,13 +130,14 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
             "Showing all products · "
           )}
           {resultCount} result{resultCount === 1 ? "" : "s"}
-          {isPending && <span className="ml-2 text-blue-600">Updating…</span>}
+          {isPending && <span className="ml-2 font-semibold text-brand-600">Updating…</span>}
         </p>
 
         {resultCount === 0 ? (
-          <p className="rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500">
-            No products match your filters.
-          </p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+            <p className="font-display text-lg font-semibold text-slate-900">No products match your filters.</p>
+            <p className="mt-1 text-sm text-slate-500">Try a different keyword or pick another category.</p>
+          </div>
         ) : (
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {visible.map((product) => (
@@ -145,7 +149,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
         )}
       </section>
 
-      <div className="space-y-6 lg:sticky lg:top-6 lg:self-start">
+      <div className="space-y-6 lg:sticky lg:top-36 lg:self-start">
         <CartSummary items={cart} onRemove={removeFromCart} onClear={emptyCart} showCartLink />
       </div>
     </div>

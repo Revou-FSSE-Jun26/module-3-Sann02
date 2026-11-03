@@ -16,7 +16,7 @@ export default function Card({ children, className, as: Tag = "div", "data-testi
     <Tag
       data-testid={testId}
       className={cn(
-        "rounded-xl border border-gray-200 bg-white p-4 shadow-sm",
+        "rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card",
         className,
       )}
     >

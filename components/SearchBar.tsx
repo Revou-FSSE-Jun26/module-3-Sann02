@@ -1,6 +1,7 @@
 "use client";
 
 import type { ChangeEvent, FormEvent } from "react";
+import { SearchIcon } from "@/components/Icons";
 
 interface SearchBarProps {
   value: string;
@@ -28,18 +29,21 @@ export default function SearchBar({
 
   return (
     <form role="search" onSubmit={handleSubmit} className="flex-1">
-      <label htmlFor="product-search" className="mb-1 block text-sm font-medium text-gray-700">
+      <label htmlFor="product-search" className="mb-1.5 block text-sm font-semibold text-slate-700">
         Search products
       </label>
-      <input
-        id="product-search"
-        type="search"
-        value={value}
-        onChange={handleChange}
-        placeholder={placeholder}
-        autoComplete="off"
-        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
-      />
+      <div className="relative">
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          id="product-search"
+          type="search"
+          value={value}
+          onChange={handleChange}
+          placeholder={placeholder}
+          autoComplete="off"
+          className="min-h-11 w-full rounded-xl border border-slate-300 bg-white py-2 pl-10 pr-3 text-sm transition-colors duration-200 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-100"
+        />
+      </div>
     </form>
   );
 }

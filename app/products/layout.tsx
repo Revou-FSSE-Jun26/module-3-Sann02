@@ -7,20 +7,25 @@ import LayoutMountLogger from "@/components/LayoutMountLogger";
  */
 export default function ProductsLayout({ children }: LayoutProps<"/products">) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <LayoutMountLogger name="products/layout" />
-      <div className="flex flex-col gap-1 rounded-xl bg-blue-600 px-4 py-3 text-white sm:flex-row sm:items-center sm:justify-between">
-        <p className="font-semibold">RevoShop Store</p>
-        <nav aria-label="Breadcrumb" className="text-sm text-blue-100">
-          <Link href="/" className="hover:text-white hover:underline">
-            Home
-          </Link>
-          <span aria-hidden="true"> &rsaquo; </span>
-          <Link href="/products" className="hover:text-white hover:underline">
-            Products
-          </Link>
-        </nav>
-      </div>
+      <nav aria-label="Breadcrumb" className="text-sm text-slate-500">
+        <ol className="flex items-center gap-2">
+          <li>
+            <Link href="/" className="transition-colors duration-200 hover:text-brand-700">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden="true" className="text-slate-300">
+            /
+          </li>
+          <li>
+            <Link href="/products" className="font-semibold text-slate-700 transition-colors duration-200 hover:text-brand-700">
+              Products
+            </Link>
+          </li>
+        </ol>
+      </nav>
       {children}
     </div>
   );

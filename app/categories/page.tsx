@@ -23,7 +23,7 @@ export default async function CategoriesPage() {
   return (
     <section aria-labelledby="categories-heading" className="space-y-6">
       <div>
-        <h1 id="categories-heading" className="text-3xl font-bold text-slate-900">
+        <h1 id="categories-heading" className="font-display text-3xl font-extrabold text-slate-900">
           Categories
         </h1>
         <p className="mt-1 text-sm text-slate-500">{categories.length} categories from the API</p>
@@ -41,12 +41,12 @@ export default async function CategoriesPage() {
                 <Card className="group flex h-full flex-col overflow-hidden p-0 transition-shadow duration-200 hover:shadow-card-hover">
                   <div className="overflow-hidden bg-slate-100">
                     <Image
-                      src={getProductImage(sample?.name ?? category.name)}
+                      src={getProductImage(sample ?? category.name)}
                       alt=""
                       width={600}
                       height={360}
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                      className="aspect-[5/3] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="aspect-[5/3] w-full object-cover"
                     />
                   </div>
                   <div className="flex flex-1 flex-col gap-2 p-5">

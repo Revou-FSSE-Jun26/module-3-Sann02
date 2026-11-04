@@ -26,7 +26,7 @@ export default function CartSummary({
   return (
     <Card as="aside" className="space-y-4 p-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">Cart</h2>
+        <h2 className="font-display text-lg font-bold text-slate-900">Cart</h2>
         {items.length > 0 && onClear && (
           <button
             type="button"
@@ -72,7 +72,7 @@ export default function CartSummary({
         </div>
         <div className="flex justify-between text-base">
           <dt className="font-semibold">Total</dt>
-          <dd className="font-display text-lg font-bold tabular-nums text-slate-900">{formatPrice(total, currency)}</dd>
+          <dd className="font-display text-lg font-extrabold tabular-nums text-slate-900">{formatPrice(total, currency)}</dd>
         </div>
       </dl>
       {showCartLink && (

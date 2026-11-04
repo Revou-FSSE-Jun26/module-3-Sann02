@@ -57,7 +57,7 @@ export function getStockBadgeClasses(status: StockStatus): string {
 
 export function getButtonClasses(inStock: boolean): string {
   return cn(
-    "inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold",
+    "inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold",
     "transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600",
     inStock
       ? "bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800"

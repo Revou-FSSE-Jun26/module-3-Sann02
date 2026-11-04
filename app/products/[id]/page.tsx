@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Badge from "@/components/Badge";
-import { ReturnIcon, ShieldIcon, TruckIcon } from "@/components/Icons";
+import { ArrowLeftIcon, ReturnIcon, ShieldIcon, TruckIcon } from "@/components/Icons";
 import ProductPurchase from "@/components/ProductPurchase";
 import { getCategories, getProduct } from "@/lib/api";
 import { getProductImage } from "@/lib/productImages";
@@ -45,9 +45,10 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
     <article className="space-y-6">
       <Link
         href="/products"
-        className="inline-flex text-sm font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800"
       >
-        &larr; Back to all products
+        <ArrowLeftIcon size={16} aria-hidden="true" />
+        Back to all products
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
@@ -68,12 +69,12 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
             {category && (
               <Link
                 href={`/products?category=${category.id}`}
-                className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-700 transition-colors duration-200 hover:bg-brand-100"
+                className="inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 transition-colors duration-200 hover:bg-brand-100"
               >
                 {category.name}
               </Link>
             )}
-            <h1 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">{product.name}</h1>
+            <h1 className="font-display text-3xl font-extrabold leading-tight text-slate-900 sm:text-4xl">{product.name}</h1>
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant={status} />
               <span className="text-sm text-slate-500">
@@ -82,7 +83,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
             </div>
           </div>
 
-          <p className="font-display text-4xl font-bold text-slate-900">{formatPrice(product.price)}</p>
+          <p className="font-display text-4xl font-extrabold text-slate-900">{formatPrice(product.price)}</p>
 
           {product.description && (
             <p className="max-w-prose leading-relaxed text-slate-600">{product.description}</p>
@@ -93,7 +94,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
             <ul className="mt-5 space-y-3 border-t border-slate-100 pt-5">
               {PROMISES.map(({ icon: Icon, text }) => (
                 <li key={text} className="flex items-center gap-3 text-sm text-slate-600">
-                  <Icon className="shrink-0 text-brand-600" />
+                  <Icon size={18} className="shrink-0 text-brand-600" aria-hidden="true" />
                   {text}
                 </li>
               ))}

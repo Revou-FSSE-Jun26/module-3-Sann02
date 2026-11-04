@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Card from "@/components/Card";
 import CreateCategoryForm from "@/components/CreateCategoryForm";
 import { FormError } from "@/components/FormField";
+import { PencilIcon, Trash2Icon } from "@/components/Icons";
 import LoadError from "@/components/LoadError";
 import { ListSkeleton } from "@/components/Skeletons";
 import { useApiData } from "@/hooks/useApiData";
@@ -75,13 +76,13 @@ export default function DashboardCategories() {
   return (
     <section aria-labelledby="categories-admin-heading" className="space-y-4">
       <div>
-        <h1 id="categories-admin-heading" className="text-3xl font-bold text-slate-900">
+        <h1 id="categories-admin-heading" className="font-display text-3xl font-extrabold text-slate-900">
           Categories
         </h1>
         <p className="text-sm text-slate-500">A category can only be deleted once no products use it.</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         <div className="space-y-3">
           <FormError message={deleteError} />
           {loading && !data ? (
@@ -89,9 +90,9 @@ export default function DashboardCategories() {
           ) : error ? (
             <LoadError message={error} onRetry={reload} />
           ) : (
-            <Card className="overflow-x-auto p-0">
+            <Card className="relative min-w-0 overflow-x-auto p-0">
               <table className="w-full min-w-[520px] text-sm" aria-label="Categories">
-                <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-500">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-semibold">Name</th>
                     <th scope="col" className="px-4 py-3 font-semibold">Description</th>
@@ -110,18 +111,20 @@ export default function DashboardCategories() {
                           <button
                             type="button"
                             onClick={() => setEditing(category)}
-                            className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold transition-colors duration-150 hover:bg-slate-100"
                             aria-label={`Edit ${category.name}`}
                           >
+                            <PencilIcon size={12} aria-hidden="true" />
                             Edit
                           </button>
                           <button
                             type="button"
                             onClick={() => handleDelete(category)}
                             disabled={deletingId === category.id}
-                            className="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-600 transition-colors duration-150 hover:bg-rose-50 disabled:opacity-50"
                             aria-label={`Delete ${category.name}`}
                           >
+                            <Trash2Icon size={12} aria-hidden="true" />
                             {deletingId === category.id ? "Deleting…" : "Delete"}
                           </button>
                         </div>

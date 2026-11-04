@@ -21,7 +21,7 @@ export default function AdminOrders() {
   return (
     <section aria-labelledby="admin-orders-heading" className="space-y-4">
       <div>
-        <h1 id="admin-orders-heading" className="text-3xl font-bold text-slate-900">
+        <h1 id="admin-orders-heading" className="font-display text-3xl font-extrabold text-slate-900">
           All orders
         </h1>
         <p className="text-sm text-slate-500">

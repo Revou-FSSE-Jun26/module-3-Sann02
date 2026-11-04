@@ -37,9 +37,9 @@ export default function OrdersTable({
   }
 
   return (
-    <Card className="overflow-x-auto p-0">
+    <Card className="relative min-w-0 overflow-x-auto p-0">
       <table className="w-full min-w-[600px] text-sm">
-        <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+        <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-500">
           <tr>
             <th scope="col" className="px-4 py-3 font-semibold">{showUser ? "Order" : "Order ID"}</th>
             {showUser && <th scope="col" className="px-4 py-3 font-semibold">User</th>}
@@ -64,7 +64,7 @@ export default function OrdersTable({
                     // A real link keeps the row reachable by keyboard and screen readers.
                     <Link
                       href={`/orders/${order.id}`}
-                      className="text-brand-600 hover:underline"
+                      className="font-semibold text-brand-700 underline-offset-2 hover:underline"
                       onClick={(e) => e.stopPropagation()}
                     >
                       #{order.id}

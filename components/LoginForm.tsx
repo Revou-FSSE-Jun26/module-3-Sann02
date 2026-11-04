@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import Card from "@/components/Card";
 import FormField, { FormError } from "@/components/FormField";
+import { LockIcon, MailIcon, SparklesIcon } from "@/components/Icons";
 import { useAuth } from "@/hooks/useAuth";
 import { loginUser } from "@/lib/apiClient";
 import { ApiError, getErrorMessage } from "@/lib/errors";
@@ -13,7 +14,6 @@ import type { LoginFormData } from "@/lib/types";
 
 type LoginErrors = Partial<Record<keyof LoginFormData, string>>;
 
-/** Which input a 400 message belongs to (the API names the field in its message). */
 function fieldFor400(error: ApiError): keyof LoginFormData {
   if (error.field === "password" || error.field === "email") return error.field;
   return /password/i.test(error.message) && !/email/i.test(error.message) ? "password" : "email";
@@ -37,7 +37,6 @@ export default function LoginForm() {
     setFormError("");
     setFieldErrors({});
 
-    // Quick client check so an empty field is reported without a round trip.
     const missing: LoginErrors = {};
     if (!form.email.trim()) missing.email = "Email is required";
     if (!form.password) missing.password = "Password is required";
@@ -49,12 +48,11 @@ export default function LoginForm() {
     setSubmitting(true);
     try {
       const { user, access_token } = await loginUser({ email: form.email.trim(), password: form.password });
-      login(user, access_token); // Context (Header updates now) + localStorage (survives refresh)
+      login(user, access_token);
       toast.success(`Welcome back, ${user.username}!`);
       router.push(user.role === "admin" ? "/dashboard" : "/");
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        // One deliberately vague, form-level message.
         setFormError("Invalid email or password");
         toast.error("Invalid email or password");
       } else if (error instanceof ApiError && error.status === 400) {
@@ -69,18 +67,26 @@ export default function LoginForm() {
   }
 
   return (
-    <Card as="section" className="mx-auto w-full max-w-md space-y-4 p-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Login</h1>
+    <Card as="section" className="mx-auto w-full max-w-md space-y-6 p-7">
+      {/* Header */}
+      <div className="space-y-1">
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl shadow-md"
+          style={{ background: "linear-gradient(135deg, #2448e0, #3866f5)" }}
+        >
+          <SparklesIcon size={22} className="text-white" />
+        </div>
+        <h1 className="font-display text-3xl font-extrabold text-slate-900">Welcome back</h1>
         <p className="text-sm text-slate-500">Admins land on the dashboard, customers on the home page.</p>
       </div>
-      <form onSubmit={handleSubmit} noValidate className="space-y-3" aria-label="Login">
+
+      <form onSubmit={handleSubmit} noValidate className="space-y-4" aria-label="Login">
         <FormField
-          label="Email"
+          label="Email address"
           name="email"
           type="email"
           autoComplete="email"
           placeholder="you@email.com"
+          icon={MailIcon}
           value={form.email}
           onChange={(e) => update("email", e.target.value)}
           error={fieldErrors.email}
@@ -91,22 +97,34 @@ export default function LoginForm() {
           type="password"
           autoComplete="current-password"
           placeholder="••••••••"
+          icon={LockIcon}
           value={form.password}
           onChange={(e) => update("password", e.target.value)}
           error={fieldErrors.password}
         />
+
         <FormError message={formError} />
+
         <button
           type="submit"
           disabled={submitting}
-          className="w-full min-h-11 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn-shine w-full min-h-11 rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:scale-100"
+          style={{ background: "linear-gradient(135deg, #2448e0, #3866f5)" }}
         >
-          {submitting ? "Signing in…" : "Login"}
+          {submitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              Signing in…
+            </span>
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
-      <p className="text-center text-sm text-slate-600">
+
+      <p className="text-center text-sm text-slate-500">
         New to RevoShop?{" "}
-        <Link href="/register" className="font-semibold text-brand-700 transition-colors duration-200 hover:text-brand-800">
+        <Link href="/register" className="font-bold text-brand-600 transition-colors duration-200 hover:text-brand-700 hover:underline">
           Create an account
         </Link>
       </p>

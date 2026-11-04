@@ -22,7 +22,7 @@ export default function DashboardNav() {
       aria-label="Dashboard"
       className="flex flex-wrap items-center gap-1 rounded-2xl border border-slate-200/80 bg-white p-1.5 shadow-card"
     >
-      <span className="mr-2 px-3 text-xs font-bold uppercase tracking-wide text-slate-500">Admin dashboard</span>
+      <span className="mr-2 px-3 text-sm font-semibold text-slate-500">Admin dashboard</span>
       {TABS.map(({ href, label }) => {
         const active = pathname === href;
         return (

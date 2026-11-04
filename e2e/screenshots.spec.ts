@@ -69,7 +69,7 @@ test("capture customer cart, checkout and orders", async ({ page }) => {
 test("capture admin dashboard", async ({ page }) => {
   await loginAsAdmin(page);
   await expect(page.getByTestId("product-row").first()).toBeVisible();
-  await page.getByRole("button", { name: "+ New product" }).click();
+  await page.getByRole("button", { name: "New product" }).click();
   await page.screenshot({ path: `${DIR}/10-admin-dashboard.png`, fullPage: true });
 
   await page.goto("/dashboard/categories");

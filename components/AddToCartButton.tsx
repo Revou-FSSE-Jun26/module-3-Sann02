@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { CartIcon } from "@/components/Icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import type { Product } from "@/lib/types";
@@ -71,7 +72,14 @@ export default function AddToCartButton({ product, quantity = 1, onAdded, classN
       disabled={maxedOut}
       className={cn(getButtonClasses(!maxedOut), className)}
     >
-      {maxedOut ? "Max in cart" : "Add to Cart"}
+      {maxedOut ? (
+        "Max in cart"
+      ) : (
+        <>
+          <CartIcon size={16} aria-hidden="true" />
+          Add to Cart
+        </>
+      )}
     </button>
   );
 }

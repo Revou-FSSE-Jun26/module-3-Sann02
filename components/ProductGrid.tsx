@@ -5,6 +5,7 @@ import { useEffect, useOptimistic, useState, useTransition } from "react";
 import toast from "react-hot-toast";
 import CartSummary from "@/components/CartSummary";
 import CategoryFilter from "@/components/CategoryFilter";
+import { SearchIcon } from "@/components/Icons";
 import ProductCard from "@/components/ProductCard";
 import SearchBar from "@/components/SearchBar";
 import { useCart } from "@/hooks/useCart";
@@ -98,7 +99,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
     <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
       <section aria-labelledby="catalog-heading" className="space-y-5">
         <div>
-          <h1 id="catalog-heading" className="text-3xl font-bold text-slate-900">
+          <h1 id="catalog-heading" className="font-display text-3xl font-extrabold text-slate-900">
             Products
           </h1>
           <p className="mt-1 text-sm text-slate-500">Browse the full catalog, live from the RevoShop API.</p>
@@ -135,7 +136,8 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
 
         {resultCount === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-            <p className="font-display text-lg font-semibold text-slate-900">No products match your filters.</p>
+            <SearchIcon size={28} className="mx-auto text-slate-300" aria-hidden="true" />
+            <p className="mt-3 font-display text-lg font-bold text-slate-900">No products match your filters.</p>
             <p className="mt-1 text-sm text-slate-500">Try a different keyword or pick another category.</p>
           </div>
         ) : (

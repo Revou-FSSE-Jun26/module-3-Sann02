@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 /*
- * RevoShop design tokens (ui-ux-pro-max e-commerce system).
- * brand  = trustworthy blue for primary actions, links and active states.
- * accent = warm orange for promotions and urgency (sale, low stock).
- * Fonts come from next/font in app/layout.tsx (Rubik for headings,
- * Nunito Sans for body) and are exposed as CSS variables.
+ * RevoShop Pro Max Design System
+ * Premium e-commerce aesthetics: glassmorphism, shimmer, micro-animations.
+ * brand  = trustworthy indigo-blue for primary actions and active states.
+ * accent = warm orange for promotions, urgency (sale, low stock).
+ * Fonts: Rubik (headings) + Nunito Sans (body) — loaded via next/font in layout.tsx.
  */
 @theme {
-  --color-brand-50: #eef4ff;
+  /* ── Brand palette ── */
+  --color-brand-50:  #eef4ff;
   --color-brand-100: #dae6ff;
   --color-brand-200: #bdd3ff;
   --color-brand-300: #90b6ff;
@@ -18,29 +19,172 @@
   --color-brand-700: #1c38b8;
   --color-brand-800: #1d3394;
   --color-brand-900: #1e3075;
-  --color-brand-950: #161e47;
+  --color-brand-950: #0f1a47;
 
-  --color-accent-50: #fff7ed;
+  /* ── Accent palette ── */
+  --color-accent-50:  #fff7ed;
   --color-accent-100: #ffedd5;
   --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
   --color-accent-400: #fb923c;
   --color-accent-500: #f97316;
   --color-accent-600: #ea580c;
   --color-accent-700: #c2410c;
 
-  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  /* ── Typography ── */
+  --font-sans:    var(--font-body),    ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
 
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
-  --shadow-card-hover: 0 10px 25px -8px rgb(15 23 42 / 0.18);
+  /* ── Shadows ── */
+  --shadow-card:        0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-card-hover:  0 12px 32px -8px rgb(15 23 42 / 0.20), 0 4px 12px -4px rgb(15 23 42 / 0.10);
+  --shadow-glow-brand:  0 0 24px -4px rgb(56 102 245 / 0.40);
+  --shadow-glow-accent: 0 0 24px -4px rgb(249 115 22 / 0.40);
+  --shadow-lifted:      0 20px 60px -12px rgb(15 23 42 / 0.25);
+
+  /* ── Animation durations ── */
+  --duration-fast:   150ms;
+  --duration-base:   250ms;
+  --duration-slow:   400ms;
+  --duration-slower: 600ms;
 }
 
+/* ══════════════════════════════════════════════
+   KEYFRAMES
+══════════════════════════════════════════════ */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cart-bounce {
+  0%, 100% { transform: scale(1); }
+  30%       { transform: scale(1.4); }
+  60%       { transform: scale(0.9); }
+}
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(1deg); }
+  66%       { transform: translateY(-4px) rotate(-1deg); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════
+   ANIMATION UTILITIES
+══════════════════════════════════════════════ */
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgb(241 245 249) 0%,
+    rgb(226 232 240) 40%,
+    rgb(241 245 249) 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.animate-fade-in    { animation: fade-in    var(--duration-slow) ease both; }
+.animate-scale-in   { animation: scale-in   var(--duration-base) ease both; }
+.animate-slide-up   { animation: slide-up   var(--duration-base) ease both; }
+.animate-float      { animation: float 5s ease-in-out infinite; }
+.animate-spin-slow  { animation: spin-slow 8s linear infinite; }
+.animate-cart-bounce { animation: cart-bounce 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ══════════════════════════════════════════════
+   GLASS MORPHISM UTILITIES
+══════════════════════════════════════════════ */
+.glass {
+  background: rgb(255 255 255 / 0.08);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgb(255 255 255 / 0.15);
+}
+
+.glass-dark {
+  background: rgb(15 23 42 / 0.60);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgb(255 255 255 / 0.08);
+}
+
+/* ══════════════════════════════════════════════
+   BUTTON SHINE EFFECT
+══════════════════════════════════════════════ */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.2),
+    transparent
+  );
+  transform: skewX(-15deg);
+  transition: left 0.5s ease;
+}
+.btn-shine:hover::before { left: 140%; }
+
+/* ══════════════════════════════════════════════
+   GRADIENT MESH BACKGROUND
+══════════════════════════════════════════════ */
+.gradient-mesh {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgb(56 102 245 / 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgb(249 115 22 / 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 80% at 60% 10%, rgb(168 85 247 / 0.15) 0%, transparent 60%),
+    rgb(15 26 71);
+}
+
+/* ══════════════════════════════════════════════
+   BASE LAYER
+══════════════════════════════════════════════ */
 @layer base {
-  h1,
-  h2,
-  h3 {
+  h1, h2, h3 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
 
   ::selection {
@@ -48,18 +192,24 @@
     color: var(--color-brand-900);
   }
 
-  /* Visible keyboard focus everywhere; mouse clicks don't show it. */
   :focus-visible {
-    outline: 2px solid var(--color-brand-600);
+    outline: 2px solid var(--color-brand-500);
     outline-offset: 2px;
+    border-radius: 6px;
   }
 
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
   }
+
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
 }
 
+/* ══════════════════════════════════════════════
+   REDUCED MOTION — disable all animations
+══════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

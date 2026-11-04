@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback } from "react";
 import Card from "@/components/Card";
+import { ArrowLeftIcon } from "@/components/Icons";
 import LoadError from "@/components/LoadError";
 import { ListSkeleton } from "@/components/Skeletons";
 import { useApiData } from "@/hooks/useApiData";
@@ -44,20 +45,24 @@ export default function OrderDetail({ orderId }: { orderId: number }) {
 
   return (
     <article className="space-y-4">
-      <Link href="/orders" className="text-sm font-medium text-brand-600 hover:underline">
-        &larr; Back to my orders
+      <Link
+        href="/orders"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-800"
+      >
+        <ArrowLeftIcon size={16} aria-hidden="true" />
+        Back to my orders
       </Link>
       <Card className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Order #{order.id}</h1>
+            <h1 className="font-display text-3xl font-extrabold text-slate-900">Order #{order.id}</h1>
             <p className="text-sm text-slate-500">Placed {formatDate(order.created_at)}</p>
           </div>
           <span className={getOrderStatusClasses(order.status)}>{order.status}</span>
         </div>
-        <div className="overflow-x-auto">
+        <div className="min-w-0 overflow-x-auto">
           <table className="w-full min-w-[480px] text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold text-slate-500">
               <tr>
                 <th scope="col" className="px-4 py-3 font-semibold">Product</th>
                 <th scope="col" className="px-4 py-3 font-semibold">Price</th>
@@ -81,7 +86,7 @@ export default function OrderDetail({ orderId }: { orderId: number }) {
         </div>
         <div className="flex justify-between border-t border-slate-200 pt-3">
           <span className="font-semibold">Total</span>
-          <span className="text-lg font-bold text-brand-700 tabular-nums">{formatPrice(order.total_amount)}</span>
+          <span className="font-display text-lg font-extrabold text-brand-700 tabular-nums">{formatPrice(order.total_amount)}</span>
         </div>
       </Card>
     </article>

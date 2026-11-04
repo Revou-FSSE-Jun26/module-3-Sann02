@@ -28,7 +28,7 @@ test.describe("Admin dashboard", () => {
     const name = `E2E Product ${uid()}`;
     const renamed = `${name} v2`;
 
-    await page.getByRole("button", { name: "+ New product" }).click();
+    await page.getByRole("button", { name: "New product" }).click();
     const form = page.getByRole("form", { name: "New product" });
 
     // Submitting empty shows the validation messages and creates nothing.

@@ -5,6 +5,7 @@ import Card from "@/components/Card";
 import FormField, { FormError } from "@/components/FormField";
 import { getErrorMessage } from "@/lib/errors";
 import type { CategoryFormData } from "@/lib/types";
+import { buttonStyles, cn } from "@/lib/utils";
 
 type CategoryErrors = Partial<Record<keyof CategoryFormData, string>>;
 
@@ -65,7 +66,7 @@ export default function CreateCategoryForm({
 
   return (
     <Card as="section" className="space-y-3">
-      <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+      <h2 className="font-display text-lg font-bold text-slate-900">{title}</h2>
       <form onSubmit={handleSubmit} noValidate className="space-y-3" aria-label={title}>
         <FormField
           label="Category name"
@@ -86,7 +87,7 @@ export default function CreateCategoryForm({
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 min-h-11 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:bg-slate-50"
+              className={cn(buttonStyles.secondary, "flex-1")}
             >
               Cancel
             </button>
@@ -94,7 +95,7 @@ export default function CreateCategoryForm({
           <button
             type="submit"
             disabled={submitting}
-            className="flex-1 min-h-11 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors duration-200 hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className={cn(buttonStyles.primary, "flex-1")}
           >
             {submitting ? "Saving…" : submitLabel}
           </button>

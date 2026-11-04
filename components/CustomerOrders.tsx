@@ -24,7 +24,7 @@ export default function CustomerOrders() {
   return (
     <section aria-labelledby="orders-heading" className="space-y-4">
       <div>
-        <h1 id="orders-heading" className="text-3xl font-bold text-slate-900">
+        <h1 id="orders-heading" className="font-display text-3xl font-extrabold text-slate-900">
           My orders
         </h1>
         <p className="text-sm text-slate-500">Orders placed by {currentUser?.username}. Click a row for details.</p>

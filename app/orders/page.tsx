@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import CustomerOrders from "@/components/CustomerOrders";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import CustomerRoute from "@/components/CustomerRoute";
 
 export const metadata: Metadata = {
   title: "My Orders",
@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 /** Customers see only their own orders; the all-users overview is /dashboard/orders. */
 export default function OrdersPage() {
   return (
-    <ProtectedRoute>
+    <CustomerRoute>
       <CustomerOrders />
-    </ProtectedRoute>
+    </CustomerRoute>
   );
 }

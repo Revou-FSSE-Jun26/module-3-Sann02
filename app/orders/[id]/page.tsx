@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import CustomerRoute from "@/components/CustomerRoute";
 import OrderDetail from "@/components/OrderDetail";
-import ProtectedRoute from "@/components/ProtectedRoute";
 
 function parseId(raw: string): number | null {
   return /^\d+$/.test(raw) && Number(raw) > 0 ? Number(raw) : null;
@@ -17,8 +17,8 @@ export default async function OrderDetailPage({ params }: PageProps<"/orders/[id
   const id = parseId((await params).id);
   if (!id) notFound();
   return (
-    <ProtectedRoute>
+    <CustomerRoute>
       <OrderDetail orderId={id} />
-    </ProtectedRoute>
+    </CustomerRoute>
   );
 }

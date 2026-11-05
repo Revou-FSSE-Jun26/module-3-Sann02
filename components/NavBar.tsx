@@ -44,7 +44,8 @@ export default function NavBar() {
   }, [itemCount]);
 
   const links: NavLink[] = [...PUBLIC_LINKS];
-  if (isLoggedIn) links.push({ href: "/orders", label: "My Orders" });
+  // "My Orders" is a customer-only page; admins use /dashboard/orders instead.
+  if (isLoggedIn && !isAdmin) links.push({ href: "/orders", label: "My Orders" });
   if (isAdmin) links.push({ href: "/dashboard", label: "Dashboard" });
 
   const cartActive = isActive(pathname, "/cart");

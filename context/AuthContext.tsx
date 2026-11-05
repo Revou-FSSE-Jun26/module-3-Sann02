@@ -29,6 +29,17 @@ function toPublicUser(user: User): User {
   return { id: user.id, username: user.username, email: user.email, role: user.role };
 }
 
+/** Decode a JWT's `exp` claim and return true if it is in the past (or unreadable). */
+function isJwtExpired(token: string): boolean {
+  try {
+    const [, payload] = token.split(".");
+    const { exp } = JSON.parse(atob(payload)) as { exp?: number };
+    return typeof exp === "number" && exp * 1000 <= Date.now();
+  } catch {
+    return true; // unparseable token -> treat as invalid
+  }
+}
+
 function readStoredUser(): User | null {
   const raw = localStorage.getItem(USER_STORAGE_KEY);
   if (!raw) return null;
@@ -53,8 +64,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // browser, so it is read here (after mount), never during render.
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect -- one-time sync from localStorage after hydration */
-    setCurrentUser(readStoredUser());
-    setToken(localStorage.getItem(TOKEN_STORAGE_KEY));
+    const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+    // An expired token must not count as a logged-in session: drop it so the
+    // user is sent to /login instead of hitting a dead-end "Token has expired".
+    if (storedToken && !isJwtExpired(storedToken)) {
+      setCurrentUser(readStoredUser());
+      setToken(storedToken);
+    } else {
+      localStorage.removeItem(USER_STORAGE_KEY);
+      localStorage.removeItem(TOKEN_STORAGE_KEY);
+    }
     setIsReady(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, []);

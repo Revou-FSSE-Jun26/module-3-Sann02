@@ -16,3 +16,12 @@ export function getErrorMessage(error: unknown, fallback = "Something went wrong
   if (error instanceof Error && error.message) return error.message;
   return fallback;
 }
+
+/**
+ * True when the API rejected the request because the JWT is missing, expired
+ * or invalid (HTTP 401). Callers use this to log out and send the user to
+ * /login instead of showing a dead-end "Token has expired" error.
+ */
+export function isAuthExpiredError(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 401;
+}

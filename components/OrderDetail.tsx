@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import toast from "react-hot-toast";
 import Card from "@/components/Card";
 import { ArrowLeftIcon } from "@/components/Icons";
 import LoadError from "@/components/LoadError";
@@ -9,21 +11,30 @@ import { ListSkeleton } from "@/components/Skeletons";
 import { useApiData } from "@/hooks/useApiData";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchOrder } from "@/lib/apiClient";
-import { ApiError } from "@/lib/errors";
+import { ApiError, isAuthExpiredError } from "@/lib/errors";
 import { formatDate, formatPrice, getOrderStatusClasses } from "@/lib/utils";
 
 /** /orders/[id]: items, quantities and totals. Customers may only open their own orders. */
 export default function OrderDetail({ orderId }: { orderId: number }) {
-  const { currentUser, isAdmin } = useAuth();
+  // This page is customer-only (guarded by CustomerRoute); admins use /dashboard/orders.
+  const { currentUser, logout } = useAuth();
+  const router = useRouter();
 
   const loadOrder = useCallback(async () => {
     try {
       return await fetchOrder(orderId);
     } catch (error) {
       if (error instanceof ApiError && error.status === 404) return null;
+      // Expired/invalid token: log out and send to /login instead of a dead-end error.
+      if (isAuthExpiredError(error)) {
+        logout();
+        toast.error("Your session expired. Please log in again.");
+        router.replace("/login");
+        return null;
+      }
       throw error;
     }
-  }, [orderId]);
+  }, [orderId, logout, router]);
 
   const { data: order, error, loading, reload } = useApiData(loadOrder);
 
@@ -31,7 +42,7 @@ export default function OrderDetail({ orderId }: { orderId: number }) {
   if (error) return <LoadError message={error} onRetry={reload} />;
 
   // Same "not found" for missing and for someone else's order (don't leak which ids exist).
-  if (!order || (!isAdmin && order.user_id !== currentUser?.id)) {
+  if (!order || order.user_id !== currentUser?.id) {
     return (
       <Card className="mx-auto max-w-lg space-y-3 py-8 text-center">
         <h1 className="text-xl font-semibold">Order not found</h1>
